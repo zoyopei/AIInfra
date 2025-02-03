@@ -54,9 +54,9 @@
 
 | 编号  | 名称       | 具体内容      | 状态      |
 |:---:|:--- |:--- |:--- |
-| 1      | [大模型存储](./02StorComm/01Storage/) | 数据存储、CheckPoint 梯度检查点  | DONE |
+| 1      | [大模型存储](./02StorComm/01Storage/) | 数据存储、CheckPoint 梯度检查点等存储与大模型结合的相关技术  | DONE |
 | 2      | [集合通信原理](./02StorComm/02Communicate/) | 通信域、通信算法、集合通信原语  | DONE |
-| 3      | [集合通信库](./02StorComm/03CommLibrary/)   | 深入地剖析 NCCL/HCCL 实现算法、对外 API  | DONE |
+| 3      | [集合通信库](./02StorComm/03CommLibrary/)   | 深入地剖析 NCCL/HCCL 实现的具体通信领域算法，以及 XCCL 集合通信库的对外 API 和使用 | DONE |
 
 ### **[03. AI 集群原理](./03AICluster/)**
 
@@ -104,13 +104,13 @@
 
 | 编号  | 名称       | 具体内容      | 状态      |
 |:---:|:--- |:--- |:--- |
-| 1      | [时事热点](./07News/00Others/)   |  OpenAI o1、WWDC 大会技术洞察   | 持续 |
+| 1      | [AI 时事热点](./07News/00Others/)   |  OpenAI o1、WWDC 大会技术洞察   | 持续 |
 | 2      | [AI智能体](./07News/01Agent/)   | AI Agent 智能体的原理、架构   | DONE |
 | 3      | [自动驾驶](./07News/02AutoDrive/)   |  端到端自动驾驶技术原理解析，萝卜快跑对产业带来的变化  | DONE |
 | 4      | [具身智能](./07News/03Embodied/)   |  关于对具身智能的技术原理、具身架构和产业思考  | DONE |
 | 5      | [生成推荐](./07News/04Remmcon/)   |  推荐领域的革命发展历程，大模型迎来了生成式推荐新的增长  | DONE |
 | 6      | [隐私计算](./07News/05Computer/)   |  隐私计算的发展过程与 Apple 引入隐私计算，到底隐私计算未来发展如何？  | DONE |
-| 7      | [AI 十年](./07News/06History/)   |  AI 过去十年的重点事件回顾，2012 到 2025 年模型、算法、芯片硬件的发展  | DONE |
+| 7      | [AI 历史十年](./07News/06History/)   |  AI 过去十年的重点事件回顾，2012 到 2025 年从模型、算法、芯片硬件的发展  | DONE |
 
 ## 知识清单
 
