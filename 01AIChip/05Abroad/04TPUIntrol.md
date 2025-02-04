@@ -1,4 +1,4 @@
-<!--Copyright © 适用于[License](https://github.com/chenzomi12/AIFoundation)版权许可-->
+<!--Copyright © 适用于[License](https://github.com/chenzomi12/AIInfra)版权许可-->
 
 # 谷歌 TPU 历史发展
 

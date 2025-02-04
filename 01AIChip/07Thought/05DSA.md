@@ -1,4 +1,4 @@
-<!--Copyright 适用于[License](https://github.com/chenzomi12/AIFoundation)版权许可-->
+<!--Copyright 适用于[License](https://github.com/chenzomi12/AIInfra)版权许可-->
 
 # 从 CUDA 对 AI 芯片思考
 

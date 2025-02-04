@@ -1,4 +1,4 @@
-<!--Copyright © ZOMI 适用于[License](https://github.com/chenzomi12/AIFoundation)版权许可-->
+<!--Copyright © ZOMI 适用于[License](https://github.com/chenzomi12/AIInfra)版权许可-->
 
 # 新算法解读
 
@@ -9,7 +9,7 @@
 > 建议优先下载 PDF 版本，PPT 版本会因为字体缺失等原因导致版本很丑哦~
 
 | 大纲 | 小节 | 链接 |
-|:---:|:----:|:--------------------:|
+|:--- |:---- |:-------------------- |
 | 新算法解读 | 2014.02 OpenAI-SORA 深度解读  | [PPT](./20240220_SORA.pdf), [视频](https://www.bilibili.com/video/BV1Bx4y1k7BQ/) |
 | 新算法解读 | 2014.05 OpenAI-GPT4o 深度解读  | [PPT](./20240517_GPT4o.pdf), [视频](https://www.bilibili.com/video/BV1Uy411Y76z/) |
 | 新算法解读 | 2014.09 OpenAI-O1 深度解读  | [PPT](./20240913OpenAIo1.pdf), [视频](https://www.bilibili.com/video/BV1QetAesERe/) |
@@ -29,7 +29,7 @@
 
 ## 备注
 
-文字课程开源在 [AISys](https://chenzomi12.github.io/)，系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/videos)，PPT 开源在[github](https://github.com/chenzomi12/AIFoundation)，欢迎取用！！！
+文字课程开源在 [AISys](https://chenzomi12.github.io/)，系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/videos)，PPT 开源在[github](https://github.com/chenzomi12/AIInfra)，欢迎取用！！！
 
 > 非常希望您也参与到这个开源课程中，B 站给 ZOMI 留言哦！
 > 

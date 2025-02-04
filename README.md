@@ -1,16 +1,16 @@
-# AIFoundation
+# AIInfra
 
-文字课程内容正在一节节补充更新，尽可能抽空继续更新正在 [AIFoundation](https://github.com/chenzomi12/AIFoundation/)，希望您多多鼓励和参与进来！！！
+文字课程内容正在一节节补充更新，尽可能抽空继续更新正在 [AIInfra](https://github.com/chenzomi12/AIInfra/)，希望您多多鼓励和参与进来！！！
 
-文字课程开源在 [AISys](https://chenzomi12.github.io/)，系列视频托管[B 站 ZOMI 酱](https://space.bilibili.com/517221395)和[油管 ZOMI6222](https://www.youtube.com/@zomi6222/videos)，PPT 开源在 [AIFoundation](https://github.com/chenzomi12/AIFoundation/)，欢迎取用！！！
+文字课程开源在 [AISys](https://chenzomi12.github.io/)，系列视频托管[B 站 ZOMI 酱](https://space.bilibili.com/517221395)和[油管 ZOMI6222](https://www.youtube.com/@zomi6222/videos)，PPT 开源在 [AIInfra](https://github.com/chenzomi12/AIInfra/)，欢迎取用！！！
 
 ## 课程背景
 
-这个开源项目英文名字叫做**AIFoundation**，中文名字叫做**大模型系统**。大模型是基于 AI 集群的全栈软硬件性能优化，通过最小的每一块 AI 芯片组成的 AI 集群，编译器使能到上层的 AI 框架，训练过程需要分布式并行、集群通信等算法支持，而且在大模型领域最近持续演进如智能体等新技术。
+这个开源项目英文名字叫做**AIInfra**，中文名字叫做**大模型系统**。大模型是基于 AI 集群的全栈软硬件性能优化，通过最小的每一块 AI 芯片组成的 AI 集群，编译器使能到上层的 AI 框架，训练过程需要分布式并行、集群通信等算法支持，而且在大模型领域最近持续演进如智能体等新技术。
 
 本开源课程主要是跟大家一起探讨和学习人工智能、深度学习的系统设计，而整个系统是围绕着 ZOMI 在工作当中所积累、梳理、构建 AI 大模型系统全栈的内容。希望跟所有关注 AI 开源课程的好朋友一起探讨研究，共同促进学习讨论。
 
-![大模型系统全栈](images/aifoundation01.jpg)
+![大模型系统全栈](images/AIInfra01.jpg)
 
 ## 课程内容大纲
 
@@ -114,11 +114,11 @@
 
 ## 知识清单
 
-![大模型系统全栈](images/aifoundation02.png)
+![大模型系统全栈](images/AIInfra02.png)
 
 ## 备注
 
-> 这个仓已经到达疯狂的 10G 啦（ZOMI 把所有制作过程、高清图片都原封不动提供），如果你要 git clone 会非常的慢，因此建议优先到  [Releases · chenzomi12/AIFoundation](https://github.com/chenzomi12/AIFoundation/releases) 来下载你需要的内容
+> 这个仓已经到达疯狂的 10G 啦（ZOMI 把所有制作过程、高清图片都原封不动提供），如果你要 git clone 会非常的慢，因此建议优先到  [Releases · chenzomi12/AIInfra](https://github.com/chenzomi12/AIInfra/releases) 来下载你需要的内容
 
 > 非常希望您也参与到这个开源课程中，B 站给 ZOMI 留言哦！
 > 

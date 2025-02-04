@@ -3,7 +3,7 @@ import os
 from urllib.request import urlopen
 from pathlib import Path
 
-project = "AIFoundation & AIInfra (大模型系统原理)"
+project = "AIInfra & AIInfra (大模型系统原理)"
 # copyright = "2024"
 # author = "ZOMI"
 language = "cn"  # For testing language translations
@@ -129,7 +129,7 @@ html_theme_options = {
     "icon_links": [
         {
             "name": "GitHub",
-            "url": "https://github.com/chenzomi12/AIFoundation",
+            "url": "https://github.com/chenzomi12/AIInfra",
             "icon": "fa-brands fa-github",
         }, {
             "name": "Youtube",

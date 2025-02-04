@@ -1,9 +1,9 @@
 import os
 from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 
-watermark_path = "/Users/a1-6/Workspaces/AIFoundation/images/watermark.png" # 水印图片的路径
-source_folder = "/Users/a1-6/Workspaces/AIFoundation/01Introduction/images" # 原始图片的文件夹
-output_folder = "/Users/a1-6/Workspaces/AIFoundation/01Introduction/watermark" # 输出图片的文件夹
+watermark_path = "/Users/a1-6/Workspaces/AIInfra/images/watermark.png" # 水印图片的路径
+source_folder = "/Users/a1-6/Workspaces/AIInfra/01Introduction/images" # 原始图片的文件夹
+output_folder = "/Users/a1-6/Workspaces/AIInfra/01Introduction/watermark" # 输出图片的文件夹
 
 watermark = Image.open(watermark_path).convert("RGBA") # 打开并转换水印图片
 watermark_width, watermark_height = watermark.size # 获取水印图片的尺寸
