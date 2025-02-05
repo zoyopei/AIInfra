@@ -17,12 +17,12 @@
 | AI过去十年 | 2016 年 AI 大事件  | [PPT](./2016.pdf), [视频]() |
 | AI过去十年 | 2017 年 AI 大事件  | [PPT](./2017.pdf), [视频]() |
 | AI过去十年 | 2018 年 AI 大事件  | [PPT](./2018.pdf), [视频]() |
-| AI过去十年 | 2019 年 AI 大事件  | [PPT](./2019.pdf), [视频]() |
-| AI过去十年 | 2020 年 AI 大事件  | [PPT](./2020.pdf), [视频]() |
-| AI过去十年 | 2021 年 AI 大事件  | [PPT](./2021.pdf), [视频]() |
-| AI过去十年 | 2022 年 AI 大事件  | [PPT](./2022.pdf), [视频]() |
-| AI过去十年 | 2023 年 AI 大事件  | [PPT](./2023.pdf), [视频]() |
-| AI过去十年 | 2024 年 AI 大事件  | [PPT](./2024.pdf), [视频]() |
+| AI过去十年 | 2019 年 AI 大事件  | [PPT](./2019.pdf), [视频](https://www.bilibili.com/video/BV1YvPReGEcj) |
+| AI过去十年 | 2020 年 AI 大事件  | [PPT](./2020.pdf), [视频](https://www.bilibili.com/video/BV193F6eoEaS) |
+| AI过去十年 | 2021 年 AI 大事件  | [PPT](./2021.pdf), [视频](https://www.bilibili.com/video/BV1cKFde7Ez9) |
+| AI过去十年 | 2022 年 AI 大事件  | [PPT](./2022.pdf), [视频](https://www.bilibili.com/video/BV1jUFQewEze) |
+| AI过去十年 | 2023 年 AI 大事件  | [PPT](./2023.pdf), [视频](https://www.bilibili.com/video/BV1kGFteBE2z) |
+| AI过去十年 | 2024 年 AI 大事件  | [PPT](./2024.pdf), [视频](https://www.bilibili.com/video/BV11KFtekE5X) |
 | AI过去十年 | AI 过去十年大事件  | [PPT](./History.pdf), [视频]() |
 
 

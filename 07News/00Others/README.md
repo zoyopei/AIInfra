@@ -11,7 +11,7 @@
 > 建议优先下载 PDF 版本，PPT 版本会因为字体缺失等原因导致版本很丑哦~
 
 | 大纲 | 小节 | 链接|
-|:--:|:--:|:--:|
+|:-- |:-- |:-- |
 | 大模型热点 | 世界模型 01：SORA 引起之争 | [PPT](./20240228_WordModel.pdf), [视频](https://www.bilibili.com/video/BV1dH4y1p7zt) |
 | 大模型热点 | 世界模型 02：Google Genie | [PPT](./20240228_WordModel.pdf), [视频](https://www.bilibili.com/video/BV1b6421F7Tq) |
 | 大模型热点 | 世界模型 03：META JEPA | [PPT](./20240228_WordModel.pdf), [视频](https://www.bilibili.com/video/BV1v1421Q73e) |
