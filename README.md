@@ -94,9 +94,10 @@
 | 1      | [Transformer 架构](./06AlgoData/01Basic) | Transformer、MoE 的架构原理介绍 | 待更 |
 | 2      | [ChatGPT 解读](./06AlgoData/02ChatGPT) | GPT 和 ChatGPT 深度解读 | DONE |
 | 3      | [大模型新架构 ](./06AlgoData/03NewArch) | SSM、MMABA、RWKV、Linear Transformer 等新大模型结构 | 待更 |
-| 4      | [向量数据库](./06AlgoData/04VectorDB) | 向量数据库中核心技术相似性搜索、相似性度量与大模型结合原理 | DONE |
-| 5      | [数据工程](./06AlgoData/05DataEngine) | 数据工程、Prompt Engine、Data2Vec 和 Tokenize 等相关技术 | 待更 |
-| 6      | [新算法解读](./06AlgoData/06NewModel) | Llama3.3、DeepSeek V3/R1、KIMI R1.5 等最新大模型算法的深度解读 | 持续 |
+| 4      | [MoE 架构 ](./06AlgoData/04MoE/) | MoE(Mixture of Experts) 模型架构原理与细节 | 待更 |
+| 5      | [向量数据库](./06AlgoData/05VectorDB) | 向量数据库中核心技术相似性搜索、相似性度量与大模型结合原理 | DONE |
+| 6      | [数据工程](./06AlgoData/06DataEngine) | 数据工程、Prompt Engine、Data2Vec 和 Tokenize 等相关技术 | 待更 |
+| 7      | [新算法解读](./06AlgoData/07NewModel) | Llama3.3、DeepSeek V3/R1、KIMI R1.5 等最新大模型算法的深度解读 | 持续 |
 
 ### **[07. 热点技术剖析](./07News/)**
 
@@ -109,7 +110,7 @@
 | 3      | [自动驾驶](./07News/02AutoDrive/)   |  端到端自动驾驶技术原理解析，萝卜快跑对产业带来的变化  | DONE |
 | 4      | [具身智能](./07News/03Embodied/)   |  关于对具身智能的技术原理、具身架构和产业思考  | DONE |
 | 5      | [生成推荐](./07News/04Remmcon/)   |  推荐领域的革命发展历程，大模型迎来了生成式推荐新的增长  | DONE |
-| 6      | [隐私计算](./07News/05Computer/)   |  隐私计算的发展过程与 Apple 引入隐私计算，到底隐私计算未来发展如何？  | DONE |
+| 6      | [AI 安全](./07News/05Computer/)   |  隐私计算的发展过程与 Apple 引入隐私计算，到底隐私计算未来发展如何？  | DONE |
 | 7      | [AI 历史十年](./07News/06History/)   |  AI 过去十年的重点事件回顾，2012 到 2025 年从模型、算法、芯片硬件的发展  | DONE |
 
 ## 知识清单
