@@ -10,13 +10,16 @@
 
 | 大纲 | 小节 | 链接 |
 |:--- |:---- |:-------------------- |
-| DeepSeek | 2015.01 DeepSeek-V3 深度解读  | [PPT](./20250107DeepSeekV3.pdf), [视频](https://www.bilibili.com/video/BV1hRcGemErK/) |
-| DeepSeek | 2015.01 DeepSeek-R1 深度解读 | [PPT](./20250120DeepSeekR1.pdf), [视频](https://www.bilibili.com/video/BV1dHw4e8E3e/) |
-| DeepSeek | 2015.01 DeepSeek-Janus Pro 深度解读 | [PPT](./20250203DeepSeekJanus.pdf), [视频]() |
+| 基础模型 | DeepSeek-V3 深度解读  | [PPT](./20250107DeepSeekV3.pdf), [视频](https://www.bilibili.com/video/BV1hRcGemErK/) |
+| 基础模型 | DeepSeek-R1 深度解读 | [PPT](./20250120DeepSeekR1.pdf), [视频](https://www.bilibili.com/video/BV1dHw4e8E3e/) |
+| 基础模型 | DeepSeek-Janus Pro 深度解读 | [PPT](./20250203DeepSeekJanus.pdf), [视频](https://www.bilibili.com/video/BV1d8P1e9EtC/) |
+| 开源 Week | day1 FlashMLA | [PPT](./OpenDay1_FlashMLA.pdf), [视频](https://www.bilibili.com/video/BV1P9PeezEkx/) |
+| 开源 Week | day2 DeepEP 原理 | [PPT](./OpenDay2_DeepEP1.pdf), [视频](https://www.bilibili.com/video/BV1bN9PYeEak/) |
+| 开源 Week | day3 DeepEP 代码 | [PPT](./OpenDay2_DeepEP2.pdf), [视频](https://www.bilibili.com/video/BV1EwXSYgEMx/) |
 
 ## 备注
 
-文字课程开源在 [AISys](https://chenzomi12.github.io/)，系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/videos)，PPT 开源在[github](https://github.com/chenzomi12/AIInfra)，欢迎取用！！！
+文字课程开源在 [AISys](https://chenzomi12.github.io/)，系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/chenzomi12/AIInfra)，欢迎取用！！！
 
 > 非常希望您也参与到这个开源课程中，B 站给 ZOMI 留言哦！
 > 
