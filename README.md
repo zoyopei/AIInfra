@@ -94,12 +94,12 @@
 | 编号  | 名称       | 具体内容      | 状态      |
 |:---:|:--- |:--- |:--- |
 | 1      | [Transformer 架构](./06AlgoData/01Basic) | Transformer、MoE 的架构原理介绍 | 待更 |
-| 2      | [MoE 架构 ](./06AlgoData/02MoE/) | MoE(Mixture of Experts) 模型架构原理与细节 |  ING |
+| 2      | [MoE 架构 ](./06AlgoData/02MoE/) | MoE(Mixture of Experts) 模型架构原理与细节 |  DONE |
 | 3      | [大模型新架构 ](./06AlgoData/03NewArch) | SSM、MMABA、RWKV、Linear Transformer 等新大模型结构 | 待更 |
 | 4      | [向量数据库](./06AlgoData/04VectorDB) | 向量数据库中核心技术相似性搜索、相似性度量与大模型结合原理 | DONE |
 | 5      | [数据工程](./06AlgoData/05DataEngine) | 数据工程、Prompt Engine、Data2Vec 和 Tokenize 等相关技术 | 待更 |
 | 6      | [ChatGPT 解读](./06AlgoData/06ChatGPT) | GPT 和 ChatGPT 深度解读 | DONE |
-| 7      | [DeepSeek](./06AlgoData/07ChatGPT) | DeepSeek 幻方量化基础大模型、多模态大模型等最新算法解读 | ING |
+| 7      | [DeepSeek](./06AlgoData/07ChatGPT) | DeepSeek 幻方量化基础大模型、多模态大模型等最新算法解读 | DONE |
 | 8      | [新算法解读](./06AlgoData/08NewModel) | Llama3.3、DeepSeek V3/R1、KIMI R1.5 等最新大模型算法的深度解读 | 持续 |
 
 ### **[07. 热点技术剖析](./07News/)**
