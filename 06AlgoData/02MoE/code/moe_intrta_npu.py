@@ -151,19 +151,45 @@ def train(rank, world_size):
     loader = DataLoader(dataset, batch_size=32, sampler=sampler)
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)
 
-    for epoch in range(100):
-        sampler.set_epoch(epoch)
-        for x, y in loader:
-            x = x.to(rank)
-            y = y.to(rank)
+    experimental_config = torch_npu.profiler._ExperimentalConfig(
+        export_type=torch_npu.profiler.ExportType.Text,
+        profiler_level=torch_npu.profiler.ProfilerLevel.Level0,
+        msprof_tx=False,
+        aic_metrics=torch_npu.profiler.AiCMetrics.AiCoreNone,
+        l2_cache=False,
+        op_attr=False,
+        data_simplification=False,
+        record_op_args=False,
+        gc_detect_threshold=None
+    )
 
-            outputs, aux_loss = model(x)
-            main_loss = F.mse_loss(outputs, y)
-            total_loss = main_loss + 0.01 * aux_loss
+    with torch_npu.profiler.profile(
+            activities=[
+                torch_npu.profiler.ProfilerActivity.CPU,
+                torch_npu.profiler.ProfilerActivity.NPU
+            ],
+            schedule=torch_npu.profiler.schedule(wait=0, warmup=0, active=1, repeat=1, skip_first=1),
+            on_trace_ready=torch_npu.profiler.tensorboard_trace_handler("./result"),
+            record_shapes=False,
+            profile_memory=False,
+            with_stack=False,
+            with_modules=False,
+            with_flops=False,
+            experimental_config=experimental_config) as prof:
+        for epoch in range(10):
+            sampler.set_epoch(epoch)
+            for x, y in loader:
+                x = x.to(rank)
+                y = y.to(rank)
 
-            optimizer.zero_grad()
-            total_loss.backward()
-            optimizer.step()
+                outputs, aux_loss = model(x)
+                main_loss = F.mse_loss(outputs, y)
+                total_loss = main_loss + 0.01 * aux_loss
+
+                optimizer.zero_grad()
+                total_loss.backward()
+                optimizer.step()
+                prof.step()
 
 # 启动训练
 if __name__ == "__main__":

@@ -6,7 +6,7 @@
 
 ## 课程位置
 
-![Position](./images/aiinfra01.png)
+![AIInfra01](./images/aiinfra01.png)
 
 ## 课程简介
 
@@ -28,7 +28,7 @@
 
 ## 课程知识
 
-![脑图](./images/aiinfra02.png)
+![AIInfra02](./images/aiinfra02.png)
 
 ## 备注
 

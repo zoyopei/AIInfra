@@ -76,7 +76,6 @@ class ExpertParallel(nn.Module):
                 
             # 容量截断
             selected = torch.nonzero(idx_mask).flatten()
-            print("selected: ", selected)
             if selected.numel() == 0:
                 continue
 
