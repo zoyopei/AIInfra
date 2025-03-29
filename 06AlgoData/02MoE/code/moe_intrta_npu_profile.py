@@ -144,7 +144,7 @@ def train(rank, world_size):
 
     experimental_config = torch_npu.profiler._ExperimentalConfig(
         export_type=torch_npu.profiler.ExportType.Text,
-        profiler_level=torch_npu.profiler.ProfilerLevel.Level0,
+        profiler_level=torch_npu.profiler.ProfilerLevel.Level1,
         msprof_tx=False,
         aic_metrics=torch_npu.profiler.AiCMetrics.AiCoreNone,
         l2_cache=False,
@@ -159,10 +159,10 @@ def train(rank, world_size):
                 torch_npu.profiler.ProfilerActivity.CPU,
                 torch_npu.profiler.ProfilerActivity.NPU
             ],
-            schedule=torch_npu.profiler.schedule(wait=0, warmup=0, active=1, repeat=1, skip_first=1),
+            schedule=torch_npu.profiler.schedule(wait=0, warmup=1, active=1, repeat=2, skip_first=1),
             on_trace_ready=torch_npu.profiler.tensorboard_trace_handler("./intrta_prof_result"),
             record_shapes=False,
-            profile_memory=False,
+            profile_memory=True,
             with_stack=False,
             with_modules=False,
             with_flops=False,
