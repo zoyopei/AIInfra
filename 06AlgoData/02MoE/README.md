@@ -20,7 +20,10 @@ MoE（Mixture of Experts）架构，即专家混合架构，是一种通过多�
 | MOE 核心论文 | 08 DeepSeek MOE 解读  | [PPT](./08DeepSeekMoE.pdf), [视频](https://www.bilibili.com/video/BV1tE9HYUEdz/) |
 | MOE 架构原理 | 09 MOE 模型可视化  | [PPT](./09MoECore.pdf), [视频](https://www.bilibili.com/video/BV1Gj9ZYdE4N/) |
 | 大模型遇 MOE | 10 MoE 参数与专家  | [PPT](./10MOELLM.pdf), [视频](https://www.bilibili.com/video/BV1UERNYqEwU/) |
-| 手撕 MOE 代码 | 11 单机单卡 MoE  | [PPT](./11MOECode.ppf), [视频]() |
+| 手撕 MOE 代码 | 11 单机单卡 MoE  | [PPT](./11MOECode.ppf), [视频](https://www.bilibili.com/video/BV1UTRYYUE5o) |
+| 手撕 MOE 代码 | 12 单机多卡 MoE  | [PPT](./11MOECode.ppf), [视频](https://www.bilibili.com/video/BV1JaR5YSEMN) |
+| 手撕 MOE 代码 | 13 MoE 性能分析  | [PPT](./11MOECode.ppf), [视频]() |
+| 视觉 MoE | 14 视觉 MoE 模型  | [PPT](./11MOECode.ppf), [视频](https://www.bilibili.com/video/BV1JNQVYBEq7) |
 
 ## 备注
 
