@@ -20,13 +20,14 @@
 
 | 序列 | 教程内容 | 简介 | 地址 | 状态 |
 | --- | --------------- | ------------------------------------------------------------------------------------------------- | ---------------------------- | ---- |
-| 01 | AI 芯片原理 | AI 芯片主要介绍 AI 的硬件体系架构，包括从芯片基础到 AI 芯片的原理与架构，芯片设计需要考虑 AI 算法与编程体系，以应对 AI 快速的发展。 | [[Slides](./01AIChip/)] | DONE |
+| 00 | 大模型系统概述 | 大模型总体介绍与概览等。 | [[Slides](./00Summary/)] | 待更 |
+| 01 | AI 计算集群 | 大模型虽然已经慢慢在端测设备开始落地，但是总体对云端的依赖仍然很重很重，AI 集群会介绍集群运维管理、集群性能、训练推理一体化拓扑流程等内容。 | [[Slides](./01AICluster/)] | 待更 |
 | 02 | 通信与存储 | 大模型训练和推理的过程中都严重依赖于网络通信，因此会重点介绍通信原理、网络拓扑、组网方案、高速互联通信的内容。存储则是会从节点内的存储到存储 POD 进行介绍。 | [[Slides](./02StorComm/)] | DONE |
-| 03 | AI 集群 | 大模型虽然已经慢慢在端测设备开始落地，但是总体对云端的依赖仍然很重很重，AI 集群会介绍集群运维管理、集群性能、训练推理一体化拓扑流程等内容。 | [[Slides](./03AICluster/)] | 待更 |
+| 03 | 集群容器与云原生 | 从容器、云原生时代到 Docker 和 K8S 技术的应用。 | [[Slides](./03DockCloud/)] | 待更 |
 | 04 | 大模型训练 | 大模型训练是通过大量数据和计算资源，利用 Transformer 架构优化模型参数，使其能够理解和生成自然语言、图像等内容，广泛应用于对话系统、文本生成、图像识别等领域。 | [[Slides](./04Train/)] | 更新中 |
 | 05 | 大模型推理 | 大模型推理核心工作是优化模型推理，实现推理加速，其中模型推理最核心的部分是Transformer Block。本节会重点探讨大模型推理的算法、调度策略和输出采样等相关算法。 | [[Slides](./05Infer/)] | 更新中 |
-| 06 | 大模型算法 | Transformer起源于NLP领域，近期统治了 CV/NLP/多模态的大模型，我们将深入地探讨 Scaling Law 背后的原理。在大模型算法背后数据和算法的评估也是核心的内容之一，如何实现 Prompt 和通过 Prompt 提升模型效果。 | [[Slides](./06AlgoData/)] | 更新中 |
-| 07 | 热点技术剖析 | 当前大模型技术已进入快速迭代期。这一时期的显著特点就是技术的更新换代速度极快，新算法、新模型层出不穷。因此本节内容将会紧跟大模型的时事内容，进行深度技术分析。 | [[Slides](./07News/)] | DONE |
+| 06 | 大模型算法与数据 | Transformer起源于NLP领域，近期统治了 CV/NLP/多模态的大模型，我们将深入地探讨 Scaling Law 背后的原理。在大模型算法背后数据和算法的评估也是核心的内容之一，如何实现 Prompt 和通过 Prompt 提升模型效果。 | [[Slides](./06AlgoData/)] | 更新中 |
+| 07 | 大模型应用 | 当前大模型技术已进入快速迭代期。这一时期的显著特点就是技术的更新换代速度极快，新算法、新模型层出不穷。因此本节内容将会紧跟大模型的时事内容，进行深度技术分析。 | [[Slides](./07Application/)] | 更新中 |
 
 ## 课程细节
 
@@ -40,81 +41,94 @@
 
 ## 课程部分
 
-### **[01. AI 芯片原理](./01AIChip/)**
+
+### **[00. 大模型系统概述](./00Summary/)**
 
 | 编号  | 名称       | 具体内容      | 状态      |
 |:---:|:--- |:--- |:--- |
-| 1      | [AI 计算体系](./01AIChip/01Foundation/) | 神经网络等 AI 技术的计算模式和计算体系架构  | DONE |
-| 2      | [AI 芯片基础](./01AIChip/02ChipBase/)   | CPU、GPU、NPU 等芯片体系架构基础原理       | DONE |
-| 3      | [图形处理器 GPU](./01AIChip/03GPUBase/)  | GPU 的基本原理，英伟达 GPU 过去 15 年 8 代架构发展  | DONE |
-| 4      | [英伟达 GPU 详解](./01AIChip/04NVIDIA/) | 英伟达 GPU 的 Tensor Core、NVLink 深度剖析 | DONE |
-| 5      | [国外 AI 处理器](./01AIChip/05Abroad/)   | 国外在谷歌 TPU、特斯拉 DOJO 等专用 AI 处理器核心原理  | DONE |
-| 6      | [国内 AI 处理器](./01AIChip/06Domestic/)   | 华为昇腾 Ascend、寒武纪、燧原科技等专用 AI 处理器核心原理  | DONE |
-| 7      | [AI 芯片黄金 10 年](./01AIChip/07Thought/)   | 对 AI 芯片的编程模式（SIMT、SIMD、SPMD、CUDA）和发展进行总结  | DONE |
+| 1      | [大模型系统概述](./00Summary/) | 大模型系统的总体介绍和概览  | 待更 |
+
+### **[01. AI 计算集群](./01AICluster/)**
+
+| 编号  | 名称       | 具体内容      | 状态      |
+|:---:|:--- |:--- |:--- |
+| 1      | [计算集群之路](./01AICluster/01Roadmap/) |    | 待更 |
+| 2      | [集群建设之巅](./01AICluster/02TypicalRepresent/)   |         | 待更 |
+| 3      | [集群性能分析](./01AICluster/03Analysis/)  |    | 待更 |
+| 4      | [实践](./01AICluster/04Practices) |   | 待更 |
 
 ### **[02. 通信与存储](./02StorComm/)**
 
 | 编号  | 名称       | 具体内容      | 状态      |
 |:---:|:--- |:--- |:--- |
-| 1      | [大模型存储](./02StorComm/01Storage/) | 数据存储、CheckPoint 梯度检查点等存储与大模型结合的相关技术  | DONE |
-| 2      | [集合通信原理](./02StorComm/02Communicate/) | 通信域、通信算法、集合通信原语  | DONE |
-| 3      | [集合通信库](./02StorComm/03CommLibrary/)   | 深入地剖析 NCCL/HCCL 实现的具体通信领域算法，以及集合通信库对外 API 与使用 | DONE |
+| 1      | [AI 集群组网之路](./02StorComm/01Roadmap/) | 集群组网的相关技术  | 待更 |
+| 2      | [网络通信进阶](./02StorComm/02NetworkComm/) |    | 待更 |
+| 3      | [集合通信原理](./02StorComm/03CollectComm/) | 通信域、通信算法、集合通信原语  | 待更 |
+| 4      | [集合通信库](./02StorComm/04CommLibrary/)   |   | 待更 |
+| 5      | [AI 集群存储之路](./02StorComm/05StorforAI/) | 数据存储、CheckPoint 梯度检查点等存储与大模型结合的相关技术  | 待更 |
 
-### **[03. AI 集群原理](./03AICluster/)**
+### **[03. 集群容器与云原生](./03DockCloud/)**
 
 | 编号  | 名称       | 具体内容      | 状态      |
 |:---:|:--- |:--- |:--- |
-| 1      | [AI 超节点](./03AICluster/01POD/) | Scale Up、SuperPod、万卡集群  | DONE |
-| 2      | [集群性能分析](./03AICluster/02Analysis/) | 集群性能分析，MFU、线性度等  | 待更 |
-| 3      | [Kubernetes](./03AICluster/03Kubernetes/) | 让集群部署容器化简单且高效  | 待更 |
+| 1      | [容器时代](./03DockCloud/01Roadmap/) |    | 待更 |
+| 2      | [Docker 与 K8S 初体验](./03DockCloud/02DockerK8s/) |    | 待更 |
+| 3      | [深入 K8S](./03DockCloud/03DiveintoK8s/) |    | 待更 |
+| 4      | [AI 集群云平台 Cloud for AI](./03DockCloud/04CloudforAI/) |    | 待更 |
+| 5      | [实践](./03DockCloud/05Practices/) |    | 待更 |
 
 ### **[04. 大模型训练](./04Train/)**
 
 | 编号  | 名称       | 具体内容      | 状态      |
 |:---:|:--- |:--- |:--- |
-| 1      | [分布式并行](./04Train/01Parallel/) | TP、PP、EP、SP、DP 多维并行  | DONE |
-| 2      | [PyTorch 框架](./04Train/02PyTorch/) | PyTorch 框架原理和昇腾适配架构  | 待更 |
-| 3      | [模型微调与后训练](./04Train/03Finetune/) | 大模型微调 SFT 与后训练 Post-Training  | 待更 |
+| 1      | [分布式并行基础](./04Train/01ParallelBegin/) |    | 待更 |
+| 2      | [大模型并行进阶](./04Train/02ParallelAdv/) |    | 待更 |
+| 3      | [大模型训练加速](./04Train/03TrainAcceler/) |    | 待更 |
+| 4      | [大模型后训练与强化学习](./04Train/04PostTrainRL/) |    | 待更 |
+| 5      | [大模型微调 SFT](./04Train/05FineTune/) |    | 待更 |
+| 6      | [大模型验证评估](./04Train/06VerifValid/) |    | 待更 |
+| 7      | [实践](./04Train/07Practices/) |    | 待更 |
 
 ### **[05. 大模型推理](./05Infer/)**
 
 | 编号  | 名称       | 具体内容      | 状态      |
 |:---:|:--- |:--- |:--- |
-| 1      | [大模型推理框架](./05Infer/01Foundation) | 推理框架整体架构，如 vLLM、SGLang | 待更 |
-| 2      | [大模型推理加速](./05Infer/02SpeedUp) |  | 待更 |
-| 3      | [架构调度与加速 ](./05Infer/03Dispatch) |  | 待更 |
-| 4      | [长序列推理](./05Infer/04LongSeq) |  | 待更 |
-| 5      | [输出采样](./05Infer/05Sampling) |  | 待更 |
-| 6      | [大模型量化与蒸馏](./05Infer/06Quantize) |  | 待更 |
+| 1      | [大模型推理基本概念](./05Infer/01Foundation) |   | 待更 |
+| 2      | [大模型推理加速](./05Infer/02InferSpeedUp) |  | 待更 |
+| 3      | [架构调度加速 ](./05Infer/03SchedSpeedUp) |  | 待更 |
+| 4      | [长序列推理](./05Infer/04LongInfer) |  | 待更 |
+| 5      | [输出采样](./05Infer/05OutputSamp) |  | 待更 |
+| 6      | [大模型压缩](./05Infer/06CompDistill) |  | 待更 |
+| 7      | [推理框架架构分析](./05Infer/07Framework) |  | 待更 |
+| 8      | [推理框架架构分析](./05Infer/08DeepSeekOptimize) |  | 待更 |
+| 9      | [实践](./05Infer/09Practices) |  | 待更 |
 
-### **[06. 大模型算法](./06AlgoData/)**
+### **[06. 大模型算法与数据](./06AlgoData/)**
 
 大部分待更，欢迎参与，08 新算法根据时事热点不定期更新
 
 | 编号  | 名称       | 具体内容      | 状态      |
 |:---:|:--- |:--- |:--- |
-| 1      | [Transformer 架构](./06AlgoData/01Basic) | Transformer、MoE 的架构原理介绍 | 待更 |
-| 2      | [MoE 架构 ](./06AlgoData/02MoE/) | MoE(Mixture of Experts) 模型架构原理与细节 |  DONE |
-| 3      | [大模型新架构 ](./06AlgoData/03NewArch) | SSM、MMABA、RWKV、Linear Transformer 等新大模型结构 | 待更 |
-| 4      | [向量数据库](./06AlgoData/04VectorDB) | 向量数据库中核心技术相似性搜索、相似性度量与大模型结合原理 | DONE |
-| 5      | [数据工程](./06AlgoData/05DataEngine) | 数据工程、Prompt Engine、Data2Vec 和 Tokenize 等相关技术 | 待更 |
-| 6      | [ChatGPT 解读](./06AlgoData/06ChatGPT) | GPT 和 ChatGPT 深度解读 | DONE |
-| 7      | [DeepSeek](./06AlgoData/07ChatGPT) | DeepSeek 幻方量化基础大模型、多模态大模型等最新算法解读 | DONE |
-| 8      | [新算法解读](./06AlgoData/08NewModel) | Llama3.3、DeepSeek V3/R1、KIMI R1.5 等最新大模型算法的深度解读 | 持续 |
+| 1      | [Transformer 架构](./06AlgoData/01Transformer) | Transformer架构原理介绍 | 待更 |
+| 2      | [MoE 架构 ](./06AlgoData/02MoE/) | MoE(Mixture of Experts) 模型架构原理与细节 |  待更 |
+| 3      | [创新架构 ](./06AlgoData/03NewArch) | SSM、MMABA、RWKV、Linear Transformer 等新大模型结构 | 待更 |
+| 4      | [图文生成与理解](./06AlgoData/04ImageTextGenerat) |   | 待更 |
+| 5      | [视频大模型](./06AlgoData/05VideoGenerat) |  | 待更 |
+| 6      | [语音大模型](./06AlgoData/06AudioGenerat) |   | 待更 |
+| 7      | [数据工程](./06AlgoData/07DataEngineer) | 数据工程、Prompt Engine、Data2Vec 和 Tokenize 等相关技术 | 待更 |
+| 8      | [实践](./06AlgoData/08Practices) |   | 待更 |
 
-### **[07. 热点技术剖析](./07News/)**
+### **[07. 大模型应用](./07Application/)**
 
 基本完结，01 根据时事热点不定期更新
 
 | 编号  | 名称       | 具体内容      | 状态      |
 |:---:|:--- |:--- |:--- |
-| 1      | [AI 时事热点](./07News/00Others/)   |  OpenAI o1、WWDC 大会技术洞察   | 持续 |
-| 2      | [AI智能体](./07News/01Agent/)   | AI Agent 智能体的原理、架构   | DONE |
-| 3      | [自动驾驶](./07News/02AutoDrive/)   |  端到端自动驾驶技术原理解析，萝卜快跑对产业带来的变化  | DONE |
-| 4      | [具身智能](./07News/03Embodied/)   |  关于对具身智能的技术原理、具身架构和产业思考  | DONE |
-| 5      | [生成推荐](./07News/04Remmcon/)   |  推荐领域的革命发展历程，大模型迎来了生成式推荐新的增长  | DONE |
-| 6      | [AI 安全](./07News/05Safe/)   |  隐私计算的发展过程与 Apple 引入隐私计算，到底隐私计算未来发展如何？  | DONE |
-| 7      | [AI 历史十年](./07News/06History/)   |  AI 过去十年的重点事件回顾，2012 到 2025 年从模型、算法、芯片硬件的发展  | DONE |
+| 1      | [AI Agent技术与实践](./07Application/01AIAgent/)   | AI Agent 智能体的原理、架构   | 待更 |
+| 2      | [检索增强生成（ RAG ）](./07Application/02RAG/)   |  检索增强生成技术的介绍  | 待更 |
+| 3      | [实践](./07Application/03Practices/)   |     | 待更 |
+| 4      | [大模型热点](./07Application/10Others/)   |  OpenAI o1、WWDC 大会技术洞察   | 待更 |
+
 
 ## 知识清单
 
