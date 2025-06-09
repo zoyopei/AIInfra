@@ -55,7 +55,6 @@
 | 1      | [计算集群之路](./01AICluster/01Roadmap/) |    | 待更 |
 | 2      | [集群建设之巅](./01AICluster/02TypicalRepresent/)   |         | 待更 |
 | 3      | [集群性能分析](./01AICluster/03Analysis/)  |    | 待更 |
-| 4      | [实践](./01AICluster/04Practices) |   | 待更 |
 
 ### **[02. 通信与存储](./02StorComm/)**
 
@@ -75,7 +74,6 @@
 | 2      | [Docker 与 K8S 初体验](./03DockCloud/02DockerK8s/) |    | 待更 |
 | 3      | [深入 K8S](./03DockCloud/03DiveintoK8s/) |    | 待更 |
 | 4      | [AI 集群云平台 Cloud for AI](./03DockCloud/04CloudforAI/) |    | 待更 |
-| 5      | [实践](./03DockCloud/05Practices/) |    | 待更 |
 
 ### **[04. 大模型训练](./04Train/)**
 
@@ -87,7 +85,6 @@
 | 4      | [大模型后训练与强化学习](./04Train/04PostTrainRL/) |    | 待更 |
 | 5      | [大模型微调 SFT](./04Train/05FineTune/) |    | 待更 |
 | 6      | [大模型验证评估](./04Train/06VerifValid/) |    | 待更 |
-| 7      | [实践](./04Train/07Practices/) |    | 待更 |
 
 ### **[05. 大模型推理](./05Infer/)**
 
@@ -95,40 +92,38 @@
 |:---:|:--- |:--- |:--- |
 | 1      | [大模型推理基本概念](./05Infer/01Foundation) |   | 待更 |
 | 2      | [大模型推理加速](./05Infer/02InferSpeedUp) |  | 待更 |
-| 3      | [架构调度加速 ](./05Infer/03SchedSpeedUp) |  | 待更 |
+| 3      | [架构调度加速](./05Infer/03SchedSpeedUp) |  | 待更 |
 | 4      | [长序列推理](./05Infer/04LongInfer) |  | 待更 |
 | 5      | [输出采样](./05Infer/05OutputSamp) |  | 待更 |
 | 6      | [大模型压缩](./05Infer/06CompDistill) |  | 待更 |
 | 7      | [推理框架架构分析](./05Infer/07Framework) |  | 待更 |
 | 8      | [推理框架架构分析](./05Infer/08DeepSeekOptimize) |  | 待更 |
-| 9      | [实践](./05Infer/09Practices) |  | 待更 |
 
 ### **[06. 大模型算法与数据](./06AlgoData/)**
-
-大部分待更，欢迎参与，08 新算法根据时事热点不定期更新
 
 | 编号  | 名称       | 具体内容      | 状态      |
 |:---:|:--- |:--- |:--- |
 | 1      | [Transformer 架构](./06AlgoData/01Transformer) | Transformer架构原理介绍 | 待更 |
-| 2      | [MoE 架构 ](./06AlgoData/02MoE/) | MoE(Mixture of Experts) 模型架构原理与细节 |  待更 |
-| 3      | [创新架构 ](./06AlgoData/03NewArch) | SSM、MMABA、RWKV、Linear Transformer 等新大模型结构 | 待更 |
+| 2      | [MoE 架构](./06AlgoData/02MoE/) | MoE(Mixture of Experts) 模型架构原理与细节 |  待更 |
+| 3      | [创新架构](./06AlgoData/03NewArch) | SSM、MMABA、RWKV、Linear Transformer 等新大模型结构 | 待更 |
 | 4      | [图文生成与理解](./06AlgoData/04ImageTextGenerat) |   | 待更 |
 | 5      | [视频大模型](./06AlgoData/05VideoGenerat) |  | 待更 |
 | 6      | [语音大模型](./06AlgoData/06AudioGenerat) |   | 待更 |
-| 7      | [数据工程](./06AlgoData/07DataEngineer) | 数据工程、Prompt Engine、Data2Vec 和 Tokenize 等相关技术 | 待更 |
-| 8      | [实践](./06AlgoData/08Practices) |   | 待更 |
+| 7      | [数据工程](./06AlgoData/07DataEngineer) | 数据工程、Prompt Engine 等相关技术 | 待更 |
 
 ### **[07. 大模型应用](./07Application/)**
 
-基本完结，01 根据时事热点不定期更新
-
 | 编号  | 名称       | 具体内容      | 状态      |
 |:---:|:--- |:--- |:--- |
-| 1      | [AI Agent技术与实践](./07Application/01AIAgent/)   | AI Agent 智能体的原理、架构   | 待更 |
-| 2      | [检索增强生成（ RAG ）](./07Application/02RAG/)   |  检索增强生成技术的介绍  | 待更 |
-| 3      | [实践](./07Application/03Practices/)   |     | 待更 |
-| 4      | [大模型热点](./07Application/10Others/)   |  OpenAI o1、WWDC 大会技术洞察   | 待更 |
-
+| 00     | [大模型热点](./07Application/00Others)   |  OpenAI、WWDC、GTC 等大会技术洞察   | 持续 |
+| 01     | [AI Agent简单概念](./07Application/01Sample/)   | AI Agent 智能体的原理、架构   | DONE |
+| 02     | [AI Agent技术与实践](./07Application/02AIAgent/)   | 深入 AI Agent 原理和核心   | 待更 |
+| 03     | [检索增强生成(RAG)](./07Application/03RAG/)   |  检索增强生成技术的介绍  | 待更 |
+| 04     | [自动驾驶](./07Application/04AutoDrive/)   |  端到端自动驾驶技术原理解析，萝卜快跑对产业带来的变化  | DONE |
+| 05     | [具身智能](./07Application/05Embodied/)   |  关于对具身智能的技术原理、具身架构和产业思考  | DONE |
+| 06     | [生成推荐](./07Application/06Remmcon/)   |  推荐领域的革命发展历程，大模型迎来了生成式推荐新的增长  | DONE |
+| 07     | [AI 安全](./07Application/07Safe/)   |  隐私计算的发展过程与 Apple 引入隐私计算，到底隐私计算未来发展如何？  | DONE |
+| 7      | [AI 历史十年](./07News/06History/)   |  AI 过去十年的重点事件回顾，2012 到 2025 年从模型、算法、芯片硬件的发展  | DONE |
 
 ## 知识清单
 
@@ -136,7 +131,7 @@
 
 ## 备注
 
-> 这个仓已经到达疯狂的 10G 啦（ZOMI 把所有制作过程、高清图片都原封不动提供），如果你要 git clone 会非常的慢，因此建议优先到  [Releases · chenzomi12/AIInfra](https://github.com/chenzomi12/AIInfra/releases) 来下载你需要的内容
+> 这个仓已经到达疯狂的 10G 啦（ZOMI 把所有制作过程、高清图片都原封不动提供），如果你要 git clone 会非常的慢，因此建议优先到  [Releases · chenzomi12/AIInfra](https://github.com/chenzomi12/AIInfra/releases) 来下载你需要的内容！
 
 > 非常希望您也参与到这个开源课程中，B 站给 ZOMI 留言哦！
 > 
