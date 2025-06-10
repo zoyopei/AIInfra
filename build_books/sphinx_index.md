@@ -1,5 +1,5 @@
 ---
-title: AIInfra & AIInfra 
+title: AIInfra 
 ---
 
 ::::{grid}
@@ -22,27 +22,31 @@ title: AIInfra & AIInfra
 
 # 课程内容大纲
 
-课程主要包括以下六大模块：
+课程主要包括以下八大模块：
 
-第一部分，AI 基础知识和大模型系统的全栈概述的[<u>**大模型系统概述**</u>](./01Introduction/README.md)，以及深度学习系统的系统性设计和方法论，主要是整体了解 AI 训练和推理全栈的体系结构内容。
+第一部分，对大模型系统和本课程内容进行系统概述[<u>**大模型系统概述**</u>](./00Summary/README.md)，
 
-第二部分，硬核篇介绍[<u>**AI 芯片概况**</u>](./02Hardware/README.md)，这里就很硬核了，从芯片基础到 AI 芯片的范围都会涉及，芯片设计需要考虑上面 AI 框架的前端、后端编译，而不是停留在天天喊着吊打英伟达，被现实打趴。
+第二部分，AI 计算集群的介绍[<u>**AI 计算集群**</u>](./01AICluster/README.md)，主要是整体了解 AI 计算集群内容。
 
-第三部分，进阶篇介绍[<u>**AI 编程与计算架构**</u>](./03Compiler/README.md)，将站在系统设计的角度，思考在设计现代机器学习系统中需要考虑的编译器问题，特别是中间表达乃至后端优化。
+第三部分，通信与存储的介绍[<u>**通信与存储**</u>](./02StorComm/README.md)，大模型训练和推理的过程中都严重依赖于网络通信，因此会重点介绍通信原理、网络拓扑、组网方案、高速互联通信的内容。存储则是会从节点内的存储到存储 POD 进行介绍。
 
-第四部分，实际应用[<u>**推理系统与引擎**</u>](./04Inference/README.md)，讲了太多原理身体太虚容易消化不良，还是得回归到业务本质，让行业、企业能够真正应用起来，而推理系统涉及一些核心算法和注意的事情也分享下。
+第四部分，集群中容器和云原生技术的介绍[<u>**集群容器与云原生**</u>](./03DockCloud/README.md)，从容器、云原生时代到 Docker 和 K8S 技术的应用，这其中包含实践内容： K8S集群搭建与实践。
 
-第五部分，介绍[<u>**AI 框架核心技术**</u>](./05Framework/README.md)，首先介绍任何一个 AI 框架都离不开的自动微分，通过自动微分功能后就会产生表示神经网络的图和算子，然后介绍 AI 框架前端的优化，还有最近很火的大模型分布式训练在 AI 框架中的关键技术。
+第五部分，涉及到大模型，就不得不提大模型训练[<u>**大模型训练**</u>](./04Train/README.md)，训练的基础是并行，加速是核心，后训练、强化学习和微调是关键，验证评估是目的。
 
-第六部分，汇总篇介绍<u>**大模型与大模型系统**</u>，大模型是基于 AI 集群的全栈软硬件性能优化，通过最小的每一块 AI 芯片组成的 AI 集群，编译器使能到上层的 AI 框架，训练过程需要分布式并行、集群通信等算法支持，而且在大模型领域最近持续演进如智能体等新技术。
+第六部分，当下大模型的热点之一：推理[<u>**大模型推理**</u>](./05Infer/README.md)，首先介绍推理的基本概念，其次介绍如何对推理进行加速，之后从架构层次进行调度加速，输出采样，针对大模型进行压缩，这其中包含以下三个实践：1.长序列推理；2.输出采样；3.大模型压缩。
 
-:::{大模型与大模型系统} 大模型与到大模型系统因为内容过多，引起整个 AI 产业和周边的网络、存储、通讯、机房建设风火水电等，在大模型系统上也加入了更多的集合通信、分布式加速库、AI Agent 等内容，因此独立一个大内容后续再详细展开。:::
+第七部分，介绍大模型所使用的算法和数据结构[<u>**大模型算法与数据**</u>](./06AlgoData/README.md)，首先介绍 Transformer 与 MOE 架构，之后针对图文生成与理解、视频语音大模型和数据工程进行介绍。
+
+第八部分，介绍大模型在各行各界应用的介绍[<u>**大模型应用**</u>](./07Application/README.md)，首先介绍大模型的典型应用场景，之后深入进阶应用，接着梳理大模型应用面临的挑战和伦理问题，最后进行未来展望。
+
+
 
 # 课程设立目的
 
 本课程主要为本科生高年级、硕博研究生、大模型系统从业者设计，帮助大家：
 
-1. 完整了解 AI 的计算机系统架构，并通过实际问题和案例，来了解 AI 完整生命周期下的系统设计。
+1. 完整了解大模型，并通过实际问题和案例，来了解大模型的系统设计。
 
 2. 介绍前沿系统架构和 AI 相结合的研究工作，了解主流框架、平台和工具来了解大模型系统。
 
@@ -50,70 +54,123 @@ title: AIInfra & AIInfra
 
 # 课程目录内容
 
-<!-- ## 一.大模型系统概述 -->
+<!-- ## 一. 大模型系统概述 -->
 
 ```{toctree}
 :maxdepth: 1
-:caption: === 一.大模型系统概述 ===
+:caption: === 一. 大模型系统概述 ===
 
-01Introduction/README
+00Summary/README
 ```
 
-<!-- ## 二. AI 硬件体系架构 -->
+<!-- ## 二. AI 计算集群 -->
 
 ```{toctree}
 :maxdepth: 1
-:caption: === 二. AI 硬件体系架构 ===
+:caption: === 二. AI 计算集群 ===
 
-02Hardware/README
-02Hardware01Foundation/README
-02Hardware02ChipBase/README
-02Hardware03GPUBase/README
-02Hardware04NVIDIA/README
-02Hardware05Abroad/README
-02Hardware06Domestic/README
-02Hardware07Thought/README
+01AICluster/README
+01AICluster01Roadmap/README
+01AICluster02TypicalRepresent/README
+01AICluster03Analysis/README
+01AICluster04Practices/README
 ```
 
-<!-- ## 三. AI 编程与计算架构 -->
+<!-- ## 三. 通信与存储 -->
 
 ```{toctree}
 :maxdepth: 1
-:caption: === 三. AI 编程与计算架构 ===
+:caption: === 三. 通信与存储 ===
 
-03Compiler/README
-03Compiler01Tradition/README
-03Compiler02AICompiler/README
-03Compiler03Frontend/README
-03Compiler04Backend/README
+02StorComm/README
+02StorComm01Roadmap/README
+02StorComm02NetworkComm/README
+02StorComm03CollectComm/README
+02StorComm04CommLibrary/README
+02StorComm05StorforAI/README
 ```
 
-<!-- ## 四. 推理系统&引擎 -->
+<!-- ## 四. 集群容器与云原生 -->
 
 ```{toctree}
 :maxdepth: 1
-:caption: === 四. 推理系统&引擎 ===
+:caption: === 四. 集群容器与云原生 ===
 
-04Inference/README
-04Inference01Inference/README
-04Inference02Mobilenet/README
-04Inference03Slim/README
-04Inference04Converter/README
-04Inference05Optimize/README
-04Inference06Kernel/README
+03DockCloud/README
+03DockCloud01Roadmap/README
+03DockCloud02DockerK8s/README
+03DockCloud03DiveintoK8s/README
+03DockCloud04CloudforAI/README
+03DockCloud05Practices/README
 ```
 
-<!-- ## 五. AI 框架核心模块 -->
+<!-- ## 五. 大模型训练 -->
 
 ```{toctree}
 :maxdepth: 1
-:caption: === 五. AI 框架核心模块 ===
+:caption: === 五. 大模型训练 ===
 
-05Framework/README
-05Framework01Foundation/README
-05Framework02AutoDiff/README
-05Framework03DataFlow/README
-05Framework04Parallel/README
+04Train/README
+04Train01ParallelBegin/README
+04Train02ParallelAdv/README
+04Train03TrainAcceler/README
+04Train04PostTrainRL/README
+04Train05FineTune/README
+04Train06VerifValid/README
+04Train07Practices/README
+```
+
+<!-- ## 六. 大模型推理 -->
+
+```{toctree}
+:maxdepth: 1
+:caption: === 六. 大模型推理 ===
+
+05Infer/README
+05Infer01Foundation/README
+05Infer02InferSpeedUp/README
+05Infer03SchedSpeedUp/README
+05Infer04LongInfer/README
+05Infer05OutputSamp/README
+05Infer06CompDistill/README
+05Infer07Framework/README
+05Infer08DeepSeekOptimize/README
+05Infer09Practices/README
+```
+
+<!-- ## 七. 大模型算法与数据 -->
+
+```{toctree}
+:maxdepth: 1
+:caption: === 七. 大模型算法与数据 ===
+
+06AlgoData/README
+06AlgoData01Transformer/README
+06AlgoData02MoE/README
+06AlgoData03NewArch/README
+06AlgoData04ImageTextGenerat/README
+06AlgoData05VideoGenerat/README
+06AlgoData06AudioGenerat/README
+06AlgoData07DataEngineer/README
+06AlgoData08Practices/README
+```
+
+<!-- ## 八. 大模型应用 -->
+
+```{toctree}
+:maxdepth: 1
+:caption: === 八. 大模型应用 ===
+
+07Application/README
+07Application00Others/README
+07Application01Sample/README
+07Application02AIAgent/README
+07Application03RAG/README
+07Application04AutoDrive/README
+07Application05Embodied/README
+07Application06Remmcon/README
+07Application07Safe/README
+07Application08History/README
 ```
 
 <!-- ## 附录内容 -->
@@ -127,7 +184,7 @@ title: AIInfra & AIInfra
 
 ## 备注
 
-文字课程开源在 [AISys](https://chenzomi12.github.io/)，系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/chenzomi12/AIInfra)，欢迎取用！！！
+文字课程开源在 [AIInfra](https://chenzomi12.github.io/)，系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/chenzomi12/AIInfra)，欢迎取用！！！
 
 > 非常希望您也参与到这个开源项目中，B 站给 ZOMI 留言哦！
 > 
