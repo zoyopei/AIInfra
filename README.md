@@ -141,14 +141,14 @@ AI集群云原生篇：容器技术、K8S编排、AI云平台与任务调度，�
 | 编号  | 名称       | 具体内容      |
 |:---:|:--- |:--- |
 | 00     | [大模型热点](./07Application/00Others)   |  OpenAI、WWDC、GTC 等大会技术洞察   |
-| 01     | [AI Agent简单概念](./07Application/01Sample/)   | AI Agent 智能体的原理、架构   |
-| 02     | [AI Agent核心技术](./07Application/02AIAgent/)   | 深入 AI Agent 原理和核心   |
+| 01     | [Agent简单概念](./07Application/01Sample/)   | AI Agent 智能体的原理、架构   |
+| 02     | [Agent核心技术](./07Application/02AIAgent/)   | 深入 AI Agent 原理和核心   |
 | 03     | [检索增强生成(RAG)](./07Application/03RAG/)   |  检索增强生成技术的介绍  |
 | 04     | [自动驾驶](./07Application/04AutoDrive/)   |  端到端自动驾驶技术原理解析，萝卜快跑对产业带来的变化  |
 | 05     | [具身智能](./07Application/05Embodied/)   |  关于对具身智能的技术原理、具身架构和产业思考  |
 | 06     | [生成推荐](./07Application/06Remmcon/)   |  推荐领域的革命发展历程，大模型迎来了生成式推荐新的增长  |
-| 07     | [AI 安全](./07Application/07Safe/)   |  隐私计算的发展过程与 Apple 引入隐私计算，到底隐私计算未来发展如何？  |
-| 08     | [AI 历史十年](./07News/06History/)   |  AI 过去十年的重点事件回顾，2012 到 2025 年从模型、算法、芯片硬件的发展  |
+| 07     | [AI 安全](./07Application/07Safe/)   |  隐私计算发展过程，隐私计算未来发展如何？  |
+| 08     | [AI 历史十年](./07News/06History/)   |  过去十年AI大事件回顾，2012到2025从模型、算法、芯片硬件发展  |
 
 ## 知识清单
 
