@@ -1,4 +1,4 @@
-# 适用于[License] (https://github.com/chenzomi12/AIInfra/blob/main/LICENSE)版权许可
+# 适用于[License] (https://github.com/chenzomi12/AISystem/blob/main/LICENSE)版权许可
 
 import os
 import shutil
@@ -150,14 +150,21 @@ def getallfile(path):
 				shutil.copy(fp, new_path)
 
 
-target_dir1 = '/Users/a1-6/Workspaces/AIInfra/02Hardware'
-target_dir2 = '/Users/a1-6/Workspaces/AIInfra/03Compiler'
-target_dir3 = '/Users/a1-6/Workspaces/AIInfra/04Inference'
-target_dir4 = '/Users/a1-6/Workspaces/AIInfra/05Framework'
-dir_paths = '/Users/a1-6/Workspaces/AIInfra_BOOK/source/'
+target_dir0 = '/home/用户名/2.Workspaces/aiinfra/00Summary'
+target_dir1 = '/home/用户名/2.Workspaces/aiinfra/01AICluster'
+target_dir2 = '/home/用户名/2.Workspaces/aiinfra/02StorComm'
+target_dir3 = '/home/用户名/2.Workspaces/aiinfra/03DockCloud'
+target_dir4 = '/home/用户名/2.Workspaces/aiinfra/04Train'
+target_dir5 = '/home/用户名/2.Workspaces/aiinfra/05Infer'
+target_dir6 = '/home/用户名/2.Workspaces/aiinfra/06AlgoData'
+target_dir7 = '/home/用户名/2.Workspaces/aiinfra/07Application'
+dir_paths = '/home/用户名/2.Workspaces/aiinfra_BOOK/source/'
 
+getallfile(target_dir0)
 getallfile(target_dir1)
 getallfile(target_dir2)
 getallfile(target_dir3)
 getallfile(target_dir4)
-
+getallfile(target_dir5)
+getallfile(target_dir6)
+getallfile(target_dir7)
