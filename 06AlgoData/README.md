@@ -6,7 +6,7 @@
 
 ## 课程位置
 
-![AIInfra01](./images/aiinfra01.png)
+![AIInfra](./images/arch01.png)
 
 ## 课程简介
 

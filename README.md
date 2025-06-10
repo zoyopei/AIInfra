@@ -44,89 +44,111 @@
 
 ### **[00. 大模型系统概述](./00Summary/)**
 
-| 编号  | 名称       | 具体内容      | 状态      |
-|:---:|:--- |:--- |:--- |
-| 1      | [Scaling Law解读](./00Summary/01ScalingLaw) | Scaling Law在不同场景下的应用与演进  | 待更 |
-| 2      | [训练推理全流程](./00Summary/02TrainInfer) | 大模型训练与推理全流程及软硬件优化  | 待更 |
-| 3      | [与 AI 系统区别](./00Summary/03Different) | AI系统与大模型系统的通用性、资源与软件栈差异  | 待更 |
-| 3      | [大模型系统发展](./00Summary/04Develop) | 大模型系统未来趋势：技术演进、场景应用与算力生态升级  | 待更 |
+大模型系统概述、Scaling Law解读、训练推理流程、系统区别及未来趋势。
+
+| 编号  | 名称       | 具体内容      |
+|:---:|:--- |:--- |
+| 1      | [Scaling Law解读](./00Summary/01ScalingLaw) | Scaling Law在不同场景下的应用与演进  |
+| 2      | [训练推理全流程](./00Summary/02TrainInfer) | 大模型训练与推理全流程及软硬件优化  |
+| 3      | [与 AI 系统区别](./00Summary/03Different) | AI系统与大模型系统的通用性、资源与软件栈差异  |
+| 3      | [大模型系统发展](./00Summary/04Develop) | 大模型系统未来趋势：技术演进、场景应用与算力生态升级  |
+
 
 ### **[01. AI 计算集群](./01AICluster/)**
 
-| 编号  | 名称       | 具体内容      | 状态      |
-|:---:|:--- |:--- |:--- |
-| 1      | [计算集群之路](./01AICluster/01Roadmap/) |  高性能计算集群发展与万卡AI集群建设及机房基础设施挑战  | 待更 |
-| 2      | [集群建设之巅](./01AICluster/02TypicalRepresent/)   | 超节点计算集群架构演进与昇腾集群组网方案解析       | 待更 |
-| 3      | [集群性能分析](./01AICluster/03Analysis/)  | 集群性能指标分析、建模与常见问题定位方法解析   | 待更 |
+AI集群架构演进、万卡集群方案、性能建模与优化，GPU/NPU精度差异及定位方法。
+
+| 编号  | 名称       | 具体内容      |
+|:---:|:--- |:--- |
+| 1      | [计算集群之路](./01AICluster/01Roadmap/) |  高性能计算集群发展与万卡AI集群建设及机房基础设施挑战  |
+| 2      | [集群建设之巅](./01AICluster/02TypicalRepresent/)   | 超节点计算集群架构演进与昇腾集群组网方案解析       |
+| 3      | [集群性能分析](./01AICluster/03Analysis/)  | 集群性能指标分析、建模与常见问题定位方法解析   |
+
 
 ### **[02. 通信与存储](./02StorComm/)**
 
-| 编号  | 名称       | 具体内容      | 状态      |
-|:---:|:--- |:--- |:--- |
-| 1      | [AI 集群组网之路](./02StorComm/01Roadmap/) | AI集群组网架构设计与高速互联技术解析  | 待更 |
-| 2      | [网络通信进阶](./02StorComm/02NetworkComm/) | 网络通信技术进阶：高速互联、拓扑算法与拥塞控制解析  | 待更 |
-| 3      | [集合通信原理](./02StorComm/03CollectComm/) | 通信域、通信算法、集合通信原语  | 待更 |
-| 4      | [集合通信库](./02StorComm/04CommLibrary/)   | 集合通信库技术解析：MPI、NCCL与HCCL架构及算法原理  | 待更 |
-| 5      | [AI 集群存储之路](./02StorComm/05StorforAI/) | 数据存储、CheckPoint 梯度检查点等存储与大模型结合的相关技术  | 待更 |
+通信与存储篇：AI集群组网技术、高速互联方案、集合通信原理与优化、存储系统设计及大模型挑战。
+
+| 编号  | 名称       | 具体内容      |
+|:---:|:--- |:--- |
+| 1      | [集群组网之路](./02StorComm/01Roadmap/) | AI集群组网架构设计与高速互联技术解析  |
+| 2      | [网络通信进阶](./02StorComm/02NetworkComm/) | 网络通信技术进阶：高速互联、拓扑算法与拥塞控制解析  |
+| 3      | [集合通信原理](./02StorComm/03CollectComm/) | 通信域、通信算法、集合通信原语  |
+| 4      | [集合通信库](./02StorComm/04CommLibrary/)   | 集合通信库技术解析：MPI、NCCL与HCCL架构及算法原理  |
+| 5      | [集群存储之路](./02StorComm/05StorforAI/) | 数据存储、CheckPoint 梯度检查点等存储与大模型结合的相关技术  |
 
 ### **[03. 集群容器与云原生](./03DockCloud/)**
 
-| 编号  | 名称       | 具体内容      | 状态      |
-|:---:|:--- |:--- |:--- |
-| 1      | [容器时代](./03DockCloud/01Roadmap/) | 容器技术基础与云原生架构解析，结合分布式训练应用实践  | 待更 |
-| 2      | [Docker 与 K8S 初体验](./03DockCloud/02DockerK8s/) | Docker与K8S基础原理及实战，涵盖容器技术与集群管理架构解析  | 待更 |
-| 3      | [深入 K8S](./03DockCloud/03DiveintoK8s/) |  K8S核心机制深度解析：编排、存储、网络、调度与监控实践 | 待更 |
-| 4      | [AI 集群云平台 Cloud for AI](./03DockCloud/04CloudforAI/) |  AI云平台演进与云原生架构解析，涵盖持续交付与智能化运维实践  | 待更 |
+AI集群云原生篇：容器技术、K8S编排、AI云平台与任务调度，提升集群资源管理与应用部署效率。
+
+| 编号  | 名称       | 具体内容      |
+|:---:|:--- |:--- |
+| 1      | [容器时代](./03DockCloud/01Roadmap/) | 容器技术基础与云原生架构解析，结合分布式训练应用实践  |
+| 2      | [容器初体验](./03DockCloud/02DockerK8s/) | Docker与K8S基础原理及实战，涵盖容器技术与集群管理架构解析  |
+| 3      | [深入 K8S](./03DockCloud/03DiveintoK8s/) |  K8S核心机制深度解析：编排、存储、网络、调度与监控实践 |
+| 4      | [AI 云平台](./03DockCloud/04CloudforAI/) |  AI云平台演进与云原生架构解析，涵盖持续交付与智能化运维实践  |
+
 
 ### **[04. 分布式训练](./04Train/)**
 
-| 编号  | 名称       | 具体内容      | 状态      |
-|:---:|:--- |:--- |:--- |
-| 1      | [分布式并行基础](./04Train/01ParallelBegin/) | 分布式并行的策略分类、模型适配与硬件资源优化对比  | 待更 |
-| 2      | [大模型并行进阶](./04Train/02ParallelAdv/) | Megatron、DeepSeed架构解析、MoE扩展与高效训练策略 | 待更 |
-| 3      | [大模型训练加速](./04Train/03TrainAcceler/) | 大模型训练加速在算法优化、内存管理与通算融合策略解析  | 待更 |
-| 4      | [后训练与强化学习](./04Train/04PostTrainRL/) |  后训练与强化学习算法对比、框架解析与工程实践  | 待更 |
-| 5      | [大模型微调 SFT](./04Train/05FineTune/) |  大模型微调算法原理、变体优化与多模态实践  | 待更 |
-| 6      | [大模型验证评估](./04Train/06VerifValid/) | 大模型评估、基准测试与统一框架解析   | 待更 |
+大模型训练全解析：并行策略、加速算法、微调与评估，覆盖训练到优化的完整流程。
+
+| 编号  | 名称       | 具体内容      |
+|:---:|:--- |:--- |
+| 1      | [分布式并行基础](./04Train/01ParallelBegin/) | 分布式并行的策略分类、模型适配与硬件资源优化对比  |
+| 2      | [大模型并行进阶](./04Train/02ParallelAdv/) | Megatron、DeepSeed架构解析、MoE扩展与高效训练策略 |
+| 3      | [大模型训练加速](./04Train/03TrainAcceler/) | 大模型训练加速在算法优化、内存管理与通算融合策略解析  |
+| 4      | [后训练与强化学习](./04Train/04PostTrainRL/) |  后训练与强化学习算法对比、框架解析与工程实践  |
+| 5      | [大模型微调 SFT](./04Train/05FineTune/) |  大模型微调算法原理、变体优化与多模态实践  |
+| 6      | [大模型验证评估](./04Train/06VerifValid/) | 大模型评估、基准测试与统一框架解析   |
+
 
 ### **[05. 分布式推理](./05Infer/)**
 
-| 编号  | 名称       | 具体内容      | 状态      |
-|:---:|:--- |:--- |:--- |
-| 1      | [大模型推理基本概念](./05Infer/01Foundation) |  大模型推理流程、框架对比与性能指标解析 | 待更 |
-| 2      | [大模型推理加速](./05Infer/02InferSpeedUp) | 大模型推理加速中KV缓存优化、算子改进与高效引擎解析 | 待更 |
-| 3      | [架构调度加速](./05Infer/03SchedSpeedUp) | 架构调度加速中缓存优化、批处理与分布式系统调度解析 | 待更 |
-| 4      | [长序列推理](./05Infer/04LongInfer) | 长序列推理算法优化、并行策略与高效生成方法解析 | 待更 |
-| 5      | [输出采样](./05Infer/05OutputSamp) | 推理输出采样的基础方法、加速策略与MOE推理优化 | 待更 |
-| 6      | [大模型压缩](./05Infer/06CompDistill) | 低精度量化、知识蒸馏与高效推理优化解析 | 待更 |
-| 7      | [推理框架架构分析](./05Infer/07Framework) | 主流推理框架vLLM、SGLang等核心技术与部署实践 | 待更 |
-| 8      | [推理框架架构分析](./05Infer/08DeepSeekOptimize) | DeepSeek推理FlashMLA、DeepEP与高效算子加速解析 | 待更 |
+大模型推理全解析：加速技术、架构优化、长序列处理与压缩方案，覆盖推理全流程与实战实践。
+
+| 编号  | 名称       | 具体内容      |
+|:---:|:--- |:--- |
+| 1      | [基本概念](./05Infer/01Foundation) |  大模型推理流程、框架对比与性能指标解析 |
+| 2      | [大模型推理加速](./05Infer/02InferSpeedUp) | 大模型推理加速中KV缓存优化、算子改进与高效引擎解析 |
+| 3      | [架构调度加速](./05Infer/03SchedSpeedUp) | 架构调度加速中缓存优化、批处理与分布式系统调度解析 |
+| 4      | [长序列推理](./05Infer/04LongInfer) | 长序列推理算法优化、并行策略与高效生成方法解析 |
+| 5      | [输出采样](./05Infer/05OutputSamp) | 推理输出采样的基础方法、加速策略与MOE推理优化 |
+| 6      | [大模型压缩](./05Infer/06CompDistill) | 低精度量化、知识蒸馏与高效推理优化解析 |
+| 7      | [推理框架架构](./05Infer/07Framework) | 主流推理框架vLLM、SGLang等核心技术与部署实践 |
+| 8      | [DeepSeek 开源](./05Infer/08DeepSeekOptimize) | DeepSeek推理FlashMLA、DeepEP与高效算子加速解析 |
+
 
 ### **[06. 大模型算法与数据](./06AlgoData/)**
 
-| 编号  | 名称       | 具体内容      | 状态      |
-|:---:|:--- |:--- |:--- |
-| 1      | [Transformer 架构](./06AlgoData/01Transformer) | Transformer架构原理介绍 | 待更 |
-| 2      | [MoE 架构](./06AlgoData/02MoE/) | MoE(Mixture of Experts) 模型架构原理与细节 |  待更 |
-| 3      | [创新架构](./06AlgoData/03NewArch) | SSM、MMABA、RWKV、Linear Transformer 等新大模型结构 | 待更 |
-| 4      | [图文生成与理解](./06AlgoData/04ImageTextGenerat) | 多模态对齐、生成、理解及统一多模态架构解析  | 待更 |
-| 5      | [视频大模型](./06AlgoData/05VideoGenerat) | 视频多模态理解与生成方法演进及Flow Matching应用 | 待更 |
-| 6      | [语音大模型](./06AlgoData/06AudioGenerat) | 语音多模态识别、合成与端到端模型演进及推理应用  | 待更 |
-| 7      | [数据工程](./06AlgoData/07DataEngineer) | 数据工程、Prompt Engine 等相关技术 | 待更 |
+大模型算法与数据全览：Transformer架构、MoE创新、多模态模型与数据工程全流程实践。
+
+| 编号  | 名称       | 具体内容      |
+|:---:|:--- |:--- |
+| 1      | [Transformer 架构](./06AlgoData/01Transformer) | Transformer架构原理介绍 |
+| 2      | [MoE 架构](./06AlgoData/02MoE/) | MoE(Mixture of Experts) 模型架构原理与细节 | 
+| 3      | [创新架构](./06AlgoData/03NewArch) | SSM、MMABA、RWKV、Linear Transformer 等新大模型结构 |
+| 4      | [图文生成与理解](./06AlgoData/04ImageTextGenerat) | 多模态对齐、生成、理解及统一多模态架构解析  |
+| 5      | [视频大模型](./06AlgoData/05VideoGenerat) | 视频多模态理解与生成方法演进及Flow Matching应用 |
+| 6      | [语音大模型](./06AlgoData/06AudioGenerat) | 语音多模态识别、合成与端到端模型演进及推理应用  |
+| 7      | [数据工程](./06AlgoData/07DataEngineer) | 数据工程、Prompt Engine 等相关技术 |
+
 
 ### **[07. 大模型应用](./07Application/)**
 
-| 编号  | 名称       | 具体内容      | 状态      |
-|:---:|:--- |:--- |:--- |
-| 00     | [大模型热点](./07Application/00Others)   |  OpenAI、WWDC、GTC 等大会技术洞察   | 持续 |
-| 01     | [AI Agent简单概念](./07Application/01Sample/)   | AI Agent 智能体的原理、架构   | DONE |
-| 02     | [AI Agent技术与实践](./07Application/02AIAgent/)   | 深入 AI Agent 原理和核心   | 待更 |
-| 03     | [检索增强生成(RAG)](./07Application/03RAG/)   |  检索增强生成技术的介绍  | 待更 |
-| 04     | [自动驾驶](./07Application/04AutoDrive/)   |  端到端自动驾驶技术原理解析，萝卜快跑对产业带来的变化  | DONE |
-| 05     | [具身智能](./07Application/05Embodied/)   |  关于对具身智能的技术原理、具身架构和产业思考  | DONE |
-| 06     | [生成推荐](./07Application/06Remmcon/)   |  推荐领域的革命发展历程，大模型迎来了生成式推荐新的增长  | DONE |
-| 07     | [AI 安全](./07Application/07Safe/)   |  隐私计算的发展过程与 Apple 引入隐私计算，到底隐私计算未来发展如何？  | DONE |
-| 7      | [AI 历史十年](./07News/06History/)   |  AI 过去十年的重点事件回顾，2012 到 2025 年从模型、算法、芯片硬件的发展  | DONE |
+大模型应用篇：AI Agent技术、RAG检索增强生成与GraphRAG，推动智能体与知识增强应用落地。
+
+| 编号  | 名称       | 具体内容      |
+|:---:|:--- |:--- |
+| 00     | [大模型热点](./07Application/00Others)   |  OpenAI、WWDC、GTC 等大会技术洞察   |
+| 01     | [AI Agent简单概念](./07Application/01Sample/)   | AI Agent 智能体的原理、架构   |
+| 02     | [AI Agent核心技术](./07Application/02AIAgent/)   | 深入 AI Agent 原理和核心   |
+| 03     | [检索增强生成(RAG)](./07Application/03RAG/)   |  检索增强生成技术的介绍  |
+| 04     | [自动驾驶](./07Application/04AutoDrive/)   |  端到端自动驾驶技术原理解析，萝卜快跑对产业带来的变化  |
+| 05     | [具身智能](./07Application/05Embodied/)   |  关于对具身智能的技术原理、具身架构和产业思考  |
+| 06     | [生成推荐](./07Application/06Remmcon/)   |  推荐领域的革命发展历程，大模型迎来了生成式推荐新的增长  |
+| 07     | [AI 安全](./07Application/07Safe/)   |  隐私计算的发展过程与 Apple 引入隐私计算，到底隐私计算未来发展如何？  |
+| 08     | [AI 历史十年](./07News/06History/)   |  AI 过去十年的重点事件回顾，2012 到 2025 年从模型、算法、芯片硬件的发展  |
 
 ## 知识清单
 
