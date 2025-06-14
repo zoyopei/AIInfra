@@ -1,6 +1,6 @@
 <!--Copyright ©  适用于[License](https://github.com/chenzomi12/AIInfra)版权许可-->
 
-# 大模型推理框架
+# 大模型推理基本概念
 
 大模型推理引擎相关技术主要包括vLLM、SG-Lang、Mooncake等。这些引擎通过优化内存管理、计算效率和并行计算能力，提升了大模型的推理速度和吞吐量。重点以 vLLM 作为例子，深入地介绍大模型推理框架的底层细节和逻辑架构。
 

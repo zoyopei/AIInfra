@@ -1,12 +1,12 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/chenzomi12/AIInfra)版权许可-->
 
-# 大模型算法与数据
+# 大模型算法与数据概述
 
 大模型作为生成式人工智能技术如 ChatGPT 的核心基础，正迅速改变产业布局，并开始塑造一种全新的用户互动模式，形成舆论引导、社会治理、信息服务等方面的不对称优势。自2020年GPT-3推出到2022年ChatGPT、2023年GPT-4及2024年Google Gemini和Claude 3的快速迭代，目前大模型方向已沉淀出关键算法与重要技术，如Transformer算法及改进架构、Scaling Laws、超大规模预训练、模型对齐、原生多模态、超长文本等。因此在本节将会重点讨论大模型相关的算法和对应的数据工程！
 
 ## 课程位置
 
-![AIInfra01](./images/aiinfra01.png)
+![AIInfra](./images/arch01.png)
 
 ## 课程简介
 
