@@ -125,9 +125,9 @@ AI集群云原生篇：容器技术、K8S编排、AI云平台与任务调度，�
 
 | 编号  | 名称       | 具体内容      |
 |:---:|:--- |:--- |
-| 1      | [Transformer 架构](./06AlgoData/01Transformer) | Transformer架构原理介绍 |
-| 2      | [MoE 架构](./06AlgoData/02MoE/) | MoE(Mixture of Experts) 模型架构原理与细节 | 
-| 3      | [创新架构](./06AlgoData/03NewArch) | SSM、MMABA、RWKV、Linear Transformer 等新大模型结构 |
+| 1      | [Transformer 架构](./06AlgoData/01Basic/) | Transformer 架构原理深度介绍 |
+| 2      | [MoE 架构](./06AlgoData/02MoE/) | MoE(Mixture of Experts) 混合专家模型架构原理与细节实现 |
+| 3      | [创新架构](./06AlgoData/03NewArch) | SSM、MMABA、RWKV、Linear Transformer、JPEA 等新大模型结构 |
 | 4      | [图文生成与理解](./06AlgoData/04ImageTextGenerat) | 多模态对齐、生成、理解及统一多模态架构解析  |
 | 5      | [视频大模型](./06AlgoData/05VideoGenerat) | 视频多模态理解与生成方法演进及Flow Matching应用 |
 | 6      | [语音大模型](./06AlgoData/06AudioGenerat) | 语音多模态识别、合成与端到端模型演进及推理应用  |
