@@ -372,5 +372,5 @@ load_balance_loss = self.num_experts * (expert_usage * routing_weights).sum()
 ## 本节视频
 
 <html>
-<iframe src="https://&as_wide=1&high_quality=1&danmaku=0&t=30&autoplay=0" width="100%" height="500" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=114133034867676&bvid=BV1UTRYYUE5o&cid=28782825014&p=1&as_wide=1&high_quality=1&danmaku=0&t=30&autoplay=0" width="100%" height="500" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 </html>

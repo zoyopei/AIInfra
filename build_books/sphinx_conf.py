@@ -75,7 +75,7 @@ myst_enable_extensions = [
 #
 html_theme = "sphinx_book_theme"
 html_logo = "_static/logo-wide.svg"
-html_title = "AI System"
+html_title = "AIInfra"
 html_copy_source = True
 html_favicon = "_static/logo-square.svg"
 html_last_updated_fmt = ""
