@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/chenzomi12/AIInfra)版权许可-->
 
-#  MoE 架构
+#  MoE 混合专家
 
 MoE（Mixture of Experts）架构，即专家混合架构，是一种通过多个专家模块并行处理不同子任务，由门控网络依据输入数据动态分配，决定各专家模块参与度，以实现更高效、灵活处理复杂任务，提升模型表现与泛化能力的技术。
 
@@ -32,7 +32,7 @@ MoE（Mixture of Experts）架构，即专家混合架构，是一种通过多�
 文字课程开源在 [AISys](https://chenzomi12.github.io/)，系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/chenzomi12/AIInfra)，欢迎取用！！！
 
 > 非常希望您也参与到这个开源课程中，B 站给 ZOMI 留言哦！
-> 
+>
 > 欢迎大家使用的过程中发现 bug 或者勘误直接提交代码 PR 到开源社区哦！
-> 
+>
 > 希望这个系列能够给大家、朋友们带来一些些帮助，也希望自己能够继续坚持完成所有内容哈！
