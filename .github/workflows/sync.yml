@@ -1,0 +1,22 @@
+name: Sync Fork
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # 每天凌晨2点自动同步
+  workflow_dispatch: # 也可以手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync upstream changes
+        uses: tgymnich/fork-sync@v2.0
+        with:
+          owner: Infrasys-AI
+          repo: AIInfra
+          base: main
+          head: main
+          token: ${{ secrets.GITHUB_TOKEN }}
