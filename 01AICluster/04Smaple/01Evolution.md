@@ -157,3 +157,12 @@ NVIDIA B系列（Blackwell架构）的蓬勃发展，无疑为国内芯片与计
 其中一个最为显著且不可逆转的趋势是，计算架构正从最初相对简单的**“芯片堆叠模式”，逐步演进为提供“整套大规模集群解决方案”**的复杂生态。NVIDIA B系列（如GB200 SuperPOD）的出现，不再仅仅是推出更强大的GPU芯片，而是着眼于如何将数以百计、乃至千计的高性能GPU，通过超高带宽的NVLink互联、先进的网络架构（ConnectX-8 InfiniBand）、以及精密的软件协调层，无缝地整合为一个具备极致扩展能力和计算效率的统一体。这不仅仅是硬件性能的线性累加，更是通过系统级优化，将计算、存储、网络融为一体，以应对万亿参数级别大模型训练和推理的严峻挑战。
 
 这种**“不断扩大规模，并提供完整端到端解决方案”的发展模式，对于国内芯片设计企业和计算服务器制造商而言，具有深远的战略意义。它提示我们，未来的竞争将不仅仅局限于单个芯片的性能指标，更在于构建能够高效协同、易于部署和管理的全栈式AI计算基础设施**。这意味着，除了在芯片设计上持续追赶国际先进水平，国内厂商还需在高速互联技术（如类NVLink）、大规模集群管理软件、高性能散热与供电系统，乃至定制化的数据中心部署方案等多个维度进行深度布局和创新，才能在未来的AI算力竞赛中占据一席之地。简而言之，竞争的焦点已从“造好芯”拓展到“搭好台”，再到“唱好戏”，最终形成一个无缝连接、高度优化的完整计算生态。
+
+
+* https://www.nvidia.com/zh-tw/data-center/gb200-nvl2/?ncid=no-ncid
+* https://www.nvidia.com/zh-tw/data-center/hgx/
+* https://www.nvidia.com/en-us/data-center/dgx-b200/
+* https://www.nvidia.com/zh-tw/data-center/dgx-superpod/?ncid=van-datacenter
+* https://www.nvidia.com/en-gb/data-center/gb200-nvl72/
+
+
