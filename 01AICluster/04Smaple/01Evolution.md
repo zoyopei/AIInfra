@@ -2,18 +2,18 @@
 
 # NV Blackwell 产品演进分析
 
-本节内容主要介绍 NVIDIA 最新一代架构 BlackWell 的整体架构演进与相关产品形态。
+NVIDIA Blackwell 架构正引领 AI 计算进入新纪元。本节将深入解析其整体架构演进与多样化的产品形态，展示从单芯片到大规模系统部署的完整生态。
 
-图1中概述了在BlackWell架构之前NVIDIA GPU的所有架构演进的过程，涵盖了从2010年的Fermi到2022年的Hopper各个时期。其中详细列举了各架构的发布时间、核心组成、主要特点与优势、制造工艺（纳米制程），以及代表型号。我们可以发现NVIDIA GPU技术在过去十余年间的显著发展，包括在核心设计、性能提升及制造工艺上的持续进步。
+下图中概述了在BlackWell架构之前NVIDIA GPU的所有架构演进的过程，涵盖了从2010年的Fermi到2022年的Hopper各个时期。其中详细列举了各架构的发布时间、核心组成、主要特点与优势、制造工艺（纳米制程），以及代表型号。我们可以发现NVIDIA GPU技术在过去十余年间的显著发展，包括在核心设计、性能提升及制造工艺上的持续进步。
 
 ![NVIDIA GPU的架构演进](./images/Evolution01.png)
 
 
-作为NVIDIA最新架构， Blackwell架构产品家族拥有从基础芯片到大规模系统部署的完整生态。从一块芯片到一个模组，再到一个Compute Tray，再到整个机柜，这种方式衍生了非常多不同型号的产品，从而产生了众多新的命名方式与产品名词，接下来我们将通过详细介绍Blackwell架构产品家族来搞清楚其真正含义以及产品背后代表的哪些新的AI方向与新产品的演进方向。
+作为 NVIDIA 最新的计算平台，Blackwell 架构产品家族拥有从基础芯片到大规模系统部署的完整生态。其产品形态涵盖从单一芯片、到模组、再到计算托盘（Compute Tray），直至整个机柜，由此衍生出众多新型号和专业名词。接下来，我们将通过详细介绍 Blackwell 架构的产品家族，来剖析其真正的含义，以及这些产品背后所代表的最新 AI 方向与产品演进趋势。
 
 ![Blackwell架构产品家族](./images/Evolution02.png)
 
-本节内容主要分为三部分：GPU产品介绍；HGX产品介绍；NVL产品介绍
+本节内容主要分为三部分：GPU产品介绍；HGX产品介绍；NVLink 与 SuperPOD 产品介绍
 
 ## GPU产品介绍
 
@@ -64,57 +64,52 @@ NVLink带宽的提升同样关键，它衡量了GPU之间以及GPU与CPU之间�
 
 ## HGX产品介绍
 
-在介绍HGX产品之前，我们先搞清楚几个特殊的产品名词。
+在深入探讨 HGX 产品线之前，让我们先厘清两个关键术语：HGX 和 DGX。理解它们各自独特的角色，将有助于您更清晰地了解 NVIDIA 在高性能计算领域的产品布局。
 
-* HGX（Hyperscale GPU eXchange） 是一个 GPU 模块化平台，主要提供给 OEM 厂商（如 Inspur、Dell、Supermicro） 来组装自己的高性能服务器。其核心是一个 GPU 托盘（Tray）或主板模块，集成了多张 GPU 及其互连网络（如 NVLink/NVSwitch）。其中不包含 CPU、存储等部件，需 OEM 厂商整合成完整服务器（例如 Supermicro SYS 系列）。总结来说，HGX 是“硬件模块 + 高速互联”，用于构建高密度、模块化、可扩展的 GPU 集群。
-* DGX（Deep GPU Xceleration）是 NVIDIA 提供的一整套高性能服务器系统，集成了GPU、CPU、内存、存储、网络等全套组件，即开即用，专为训练和推理大模型设计。这类产品由 NVIDIA 亲自设计、制造和销售。
+* HGX（Hyperscale GPU eXchange） 是 NVIDIA 推出的一款强大且模块化的 GPU 平台，主要面向 OEM 厂商，例如浪潮（Inspur）、戴尔（Dell）和超微（Supermicro）。您可以将 HGX 想象成高性能服务器的“核心引擎”。它主要由一个 GPU 托盘或主板模块构成，集成了多颗 GPU 及其高速互联网络，例如 NVLink 和 NVSwitch。至关重要的一点是，HGX 模块本身不包含CPU、存储或其他服务器必备组件。相反，它提供核心的 GPU 计算能力和高速网络互联，由 OEM 厂商将其整合到他们完整的服务器系统中（例如超微的 SYS 系列）。简而言之，HGX 提供的是**硬件模块 + 高速互联**，旨在帮助构建高密度、模块化、可扩展的 GPU 集群。
+* DGX（Deep GPU Xceleration）是 NVIDIA 直接提供的一整套开箱即用的高性能服务器系统。这类产品由 NVIDIA 亲自设计、制造和销售。DGX 系统是一个一体化的解决方案，集成了 GPU、CPU、内存、存储和网络组件，形成一个完整且优化的系统。DGX 产品专为大型 AI 模型的训练和推理而设计，提供无缝、即插即用的体验。
 
+现在，我们已经区分了这两个关键平台，接下来将以 HGX 系列产品为例，介绍从 Ampere 架构到 Blackwell 架构的技术演进。
 
-![alt text](./images/Evolution06.png)
+![HGX](./images/Evolution06.png)
 
-这张表格详尽地展示了NVIDIA不同代次HGX平台产品的关键技术规格对比，涵盖了从Ampere架构的HGX A100到最新Blackwell架构的HGX B100和HGX B200。
+图中详尽地展示了NVIDIA不同代次HGX平台产品的关键技术规格对比，涵盖了从Ampere架构的HGX A100到最新Blackwell架构的HGX B100和HGX B200。
 
-表格首先列出了产品名称，清晰指明了每款HGX配置所搭载的GPU类型和数量（例如，HGX A100通常配置8颗A100 SXM GPU）。随后，它按照架构进行了分类：Ampere、Hopper和Blackwell，体现了NVIDIA产品线的迭代演进。
+核心指标方面，图中详细对比了以下几个关键性能参数：
 
-核心指标方面，表格详细对比了以下几个关键性能参数：
+**HBM大小和HBM带宽**：这些数据反映了系统总体的显存容量和数据吞吐能力。可以看到，从HGX A100的640GB HBM和2TB/s带宽，逐步提升到HGX H100的1.1TB HBM和3.35TB/s带宽，再到HGX B200惊人的1.5TB HBM和8TB/s带宽，显存容量和带宽都呈现出显著的增长趋势，以满足日益庞大的AI模型对显存和数据传输的需求。
 
-HBM大小和HBM带宽：这些数据反映了系统总体的显存容量和数据吞吐能力。可以看到，从HGX A100的640GB HBM和2TB/s带宽，逐步提升到HGX H100的1.1TB HBM和3.35TB/s带宽，再到HGX B200惊人的1.5TB HBM和8TB/s带宽，显存容量和带宽都呈现出显著的增长趋势，以满足日益庞大的AI模型对显存和数据传输的需求。
+**浮点和整数运算能力 (FLOPs/OPS)**：表格列出了不同精度（FP16、INT8、FP8、FP6、FP4）的理论峰值算力。
 
-浮点和整数运算能力 (FLOPs/OPS)：表格列出了不同精度（FP16、INT8、FP8、FP6、FP4）的理论峰值算力。
+* FP16 算力从HGX A100的312T FLOPs提升到HGX H100的1 PFLOPs，再到HGX B200的2.25 PFLOPs，显示了AI训练能力的大幅提升。
+* INT8 (8-bit integer) 算力同样从624T OPS跃升至4.5P OPS，表明在推理任务中的效率显著提高。
+* FP8、FP6和FP4 是更低精度的浮点运算，其中FP8在Hopper架构中开始支持，而FP6和FP4则主要在Blackwell架构中出现并显示出极高的性能（例如HGX B200的FP4达到9P FLOPs），这对于大模型推理和进一步压缩计算量至关重要。
 
-FP16 (Half-precision floating-point) 算力从HGX A100的312T FLOPs提升到HGX H100的1 PFLOPs，再到HGX B200的2.25 PFLOPs，显示了AI训练能力的大幅提升。
-INT8 (8-bit integer) 算力同样从624T OPS跃升至4.5P OPS，表明在推理任务中的效率显著提高。
-FP8、FP6和FP4 是更低精度的浮点运算，其中FP8在Hopper架构中开始支持，而FP6和FP4则主要在Blackwell架构中出现并显示出极高的性能（例如HGX B200的FP4达到9P FLOPs），这对于大模型推理和进一步压缩计算量至关重要。
-互联带宽：
+**互联带宽**：
 
-GPU-GPU带宽：衡量了HGX模块内部GPU之间的数据传输速度，从A100的600 GB/s提升到H100的900 GB/s，再到Blackwell的1.8 TB/s，确保了多GPU协同计算的高效性。
-NVLink带宽：这是GPU之间，乃至HGX模块之间的高速互联总带宽，从HGX A100的4.8 TB/s到HGX H100的7.2 TB/s，再到HGX B200的14.4 TB/s，其翻倍的增长对于构建更大规模的AI集群至关重要。
-网络带宽：表格还包括了外部网络连接的能力，如Ethernet带宽和IB（InfiniBand）带宽。这些指标从HGX A100的200 Gb/s以太网和8 x 200 Gb/s IB，提升到HGX B200的2 x 400 Gb/s以太网和8 x 400 Gb/s IB，体现了系统对外数据传输能力的显著增强，这对于分布式训练和集群扩展至关重要。
+* GPU-GPU带宽：衡量了HGX模块内部GPU之间的数据传输速度，从A100的600 GB/s提升到H100的900 GB/s，再到Blackwell的1.8 TB/s，确保了多GPU协同计算的高效性。
+* NVLink带宽：这是GPU之间，乃至HGX模块之间的高速互联总带宽，从HGX A100的4.8 TB/s到HGX H100的7.2 TB/s，再到HGX B200的14.4 TB/s，其翻倍的增长对于构建更大规模的AI集群至关重要。
+* 网络带宽：表格还包括了外部网络连接的能力，如Ethernet带宽和IB（InfiniBand）带宽。这些指标从HGX A100的200 Gb/s以太网和8 x 200 Gb/s IB，提升到HGX B200的2 x 400 Gb/s以太网和8 x 400 Gb/s IB，体现了系统对外数据传输能力的显著增强，这对于分布式训练和集群扩展至关重要。
 
-功耗 (Power)：分GPUs Power（GPU核心功耗）和总Power（整个HGX服务器的功耗）。可以看到，随着性能的提升，功耗也相应增加，从HGX A100的6.5kw总功耗，跃升到HGX B200的14.3kw，这反映了高性能计算对电力和散热基础设施的更高要求。
+**功耗**：分GPUs Power（GPU核心功耗）和总Power（整个HGX服务器的功耗）。可以看到，随着性能的提升，功耗也相应增加，从HGX A100的6.5kw总功耗，跃升到HGX B200的14.3kw。
 
-网络产品：展示了各代HGX平台所搭载的网络适配器或DPU（数据处理器），如ConnectX系列网卡和BlueField-3 DPU，它们提供了高性能的网络连接和卸载能力。
-
-总体而言，这张表格清晰地描绘了NVIDIA HGX平台在每个架构迭代中，从GPU核心性能、显存、内部互联到外部网络连接能力的全面且显著的提升，展示了NVIDIA为应对日益增长的AI和HPC工作负载所做的持续努力和技术突破。
-
+**网络产品**：展示了各代HGX平台所搭载的网络适配器或DPU（数据处理器），如ConnectX系列网卡和BlueField-3 DPU，它们提供了高性能的网络连接和卸载能力。
 
 通过深入分析NVIDIA HGX平台的产品规格演变，我们可以清晰地描绘出其技术迭代的轨迹。首先，从Ampere架构的HGX A100迈向Hopper架构的HGX H100/H200时，FP16浮点运算能力实现了约3.2倍的飞跃，与此同时，总功耗的增幅却控制在2倍以内，这充分彰显了新一代纳米制程工艺在提升计算效率和优化能耗方面的卓越贡献。紧接着，从Hopper架构的HGX H100/H200过渡到Blackwell架构的HGX B100/B200，FP16算力再次取得了约2倍的显著增长，而令人惊喜的是，系统总功耗却基本保持不变，这主要归功于Blackwell架构引入的创新性双晶粒（2 Die）设计，有效提升了封装内的计算密度。然而，在外部网络连接方面，尽管GPU核心性能实现了跨越式发展，但Blackwell架构的InfiniBand（IB）带宽仍维持在8x400Gb/s，其升级速度相较于GPU算力的爆发式增长显得相对滞缓，这可能预示着未来超大规模AI集群在节点间通信方面可能面临新的挑战。
 
 
 ## NVL & SuperPod 产品介绍
 
-这张表格全面介绍了NVIDIA用于构建大规模AI计算集群的NVL（NVLink）模块和SuperPOD系统，涵盖了Hopper架构（NVL 32, GH200 SuperPod）和Blackwell架构（NVL72, GB200 SuperPod）的主要产品及其关键性能指标。
+GB200 NVL72 是 NVIDIA Grace Blackwell 超级芯片的创新集成，采用先进的液冷机架式设计，集成了 36 个 GB200 Grace Blackwell 超级芯片。
 
-**首先，从架构和产品构成来看：**
-表格清晰地将产品分为Hopper和Blackwell两大架构。Hopper架构的产品包括：
-* **NVL 32**：这是一个基础模块，包含32颗GH200 GPU。
-* **GH200 SuperPod**：由256颗GH200 GPU组成，是大型Hopper集群的核心。
+作为 GB200 NVL72 的核心，每个 GB200 Grace Blackwell 超级芯片都通过 NVIDIA NVLink™-C2C 高速互连技术，将两颗高性能的 NVIDIA Blackwell Tensor Core GPU 与一个 NVIDIA Grace™ CPU 紧密连接起来，实现了 CPU 与 GPU 之间以及两颗 GPU 之间的极致带宽通信。
 
-Blackwell架构的产品则包括：
-* **NVL72**：这是Blackwell架构下的基础模块，内含36颗GB200 GPU。值得注意的是，GB200 GPU本身是双晶粒（2 Die）设计，且集成了Grace CPU，因此“36 x GB200”实际上代表了72颗B200 GPU和36颗Grace CPU，这在逻辑上等同于72个GPU的概念。
-* **GB200 SuperPod**：由288颗GB200 GPU构成，是Blackwell架构下目前公布的超大规模AI系统，其计算密度和总算力达到了前所未有的水平。
+在此基础上，GB200 SuperPOD 则是一个由 8 个 GB200 NVL72 单元组成的超级计算集群，旨在提供前所未有的 AI 训练和推理性能。
 
-**其次，在核心性能指标上，表格展示了代际间的显著提升：**
+![NVL&SuperPod](./images/Evolution07.png)
+
+
+上图全面介绍了Hopper架构（GH200 NVL 32, GH200 SuperPod）和Blackwell架构（GB200 NVL72, GB200 SuperPod）的主要产品及其关键性能指标。
 
 1.  **内存与带宽**：HBM总大小从GH200 SuperPod的24.5TB（LPDDR5X为123TB）大幅跃升至GB200 SuperPod的110TB，显存带宽也从Hopper的4.8TB/s提升到Blackwell的8TB/s。这表明新架构为超大规模AI模型提供了更广阔的内存空间和更快的数据存取速度。
 
@@ -135,34 +130,12 @@ Blackwell架构的产品则包括：
 
 6.  **网络产品**：Hopper架构的HGX使用ConnectX-7 NIC，而Blackwell架构则升级到ConnectX-8 NIC，提供了更高的网络性能和更先进的网络卸载功能。
 
-综上所述，这张表格系统地展示了NVIDIA在构建大规模AI超算平台上的技术演进和领先优势。通过持续提升GPU核心性能、扩展内存带宽、增强GPU内部和集群间互联能力，NVIDIA的NVL模块和SuperPOD系统为推动AI大模型训练和推理的边界提供了无与伦比的计算基础。
-
-
-NVIDIA大规模AI计算平台从Hopper到Blackwell架构的升级，带来了核心计算能力的巨大飞跃。
-
-首先，在基础模块层面，从NVL32（32颗GH200 GPU，32 PFLOPs FP16算力）到NVL72（72颗GB200 GPU，180 PFLOPs FP16算力），FP16性能实现了近六倍的提升，这得益于GPU数量的增加和Blackwell架构单卡性能的显著增强。
-
-其次，在构建超大规模SuperPOD系统时，这种性能倍增效应得以延续。GH200 SuperPod（256颗GH200 GPU，256 PFLOPs FP16算力）升级至GB200 SuperPod（576颗GB200 GPU，1440 PFLOPs FP16算力），FP16性能同样实现了接近六倍的增长，确保了集群扩展时的线性收益。
-
-最后，Blackwell架构的NVL72和GB200 SuperPod均采用了更先进的ConnectX-8 InfiniBand网卡，提供800Gb/s带宽，保障了大规模集群内部和集群间的高效数据传输，为训练和部署巨型AI模型提供了坚实的基础。
 
 ## 总结与思考
 
-整个B系列的发展对于国内芯片与计算服务器的发展有非常多的启发。
+NVIDIA Blackwell 架构的蓬勃发展，无疑为国内芯片与计算服务器产业的未来指明了极具价值的启发方向。
 
-有一个趋势，从之前最初堆芯片的方式慢慢形成整一套大规模集群解决方案，这是很明显的发展趋势。不断的扩大规模。
+其中一个最为显著且不可逆转的趋势是，计算架构正从最初相对简单的**芯片堆叠模式，逐步演进为提供整套大规模集群解决方案**的复杂生态。NVIDIA Blackwell 架构（如 GB200 SuperPOD）的出现，不再仅仅是推出更强大的 GPU 芯片，而是着眼于如何将数以百计、乃至千计的高性能 GPU，通过超高带宽的 NVLink 互联、先进的网络架构（例如 ConnectX-8 InfiniBand），以及精密的软件协调层，无缝地整合为一个具备极致扩展能力和计算效率的统一体。这不仅仅是硬件性能的线性累加，更是通过系统级优化，将计算、存储、网络融为一体，以应对万亿参数级别大模型训练和推理的严峻挑战。
 
-NVIDIA B系列（Blackwell架构）的蓬勃发展，无疑为国内芯片与计算服务器产业的未来指明了极具价值的启发方向。
-
-其中一个最为显著且不可逆转的趋势是，计算架构正从最初相对简单的**“芯片堆叠模式”，逐步演进为提供“整套大规模集群解决方案”**的复杂生态。NVIDIA B系列（如GB200 SuperPOD）的出现，不再仅仅是推出更强大的GPU芯片，而是着眼于如何将数以百计、乃至千计的高性能GPU，通过超高带宽的NVLink互联、先进的网络架构（ConnectX-8 InfiniBand）、以及精密的软件协调层，无缝地整合为一个具备极致扩展能力和计算效率的统一体。这不仅仅是硬件性能的线性累加，更是通过系统级优化，将计算、存储、网络融为一体，以应对万亿参数级别大模型训练和推理的严峻挑战。
-
-这种**“不断扩大规模，并提供完整端到端解决方案”的发展模式，对于国内芯片设计企业和计算服务器制造商而言，具有深远的战略意义。它提示我们，未来的竞争将不仅仅局限于单个芯片的性能指标，更在于构建能够高效协同、易于部署和管理的全栈式AI计算基础设施**。这意味着，除了在芯片设计上持续追赶国际先进水平，国内厂商还需在高速互联技术（如类NVLink）、大规模集群管理软件、高性能散热与供电系统，乃至定制化的数据中心部署方案等多个维度进行深度布局和创新，才能在未来的AI算力竞赛中占据一席之地。简而言之，竞争的焦点已从“造好芯”拓展到“搭好台”，再到“唱好戏”，最终形成一个无缝连接、高度优化的完整计算生态。
-
-
-* https://www.nvidia.com/zh-tw/data-center/gb200-nvl2/?ncid=no-ncid
-* https://www.nvidia.com/zh-tw/data-center/hgx/
-* https://www.nvidia.com/en-us/data-center/dgx-b200/
-* https://www.nvidia.com/zh-tw/data-center/dgx-superpod/?ncid=van-datacenter
-* https://www.nvidia.com/en-gb/data-center/gb200-nvl72/
-
+这种持续扩大规模并提供端到端解决方案的发展模式，对国内芯片设计企业和计算服务器制造商而言意义深远。未来的竞争不再局限于单一芯片性能，更在于构建高效协同、易于部署和管理的全栈式 AI 计算基础设施。这意味着，除了在芯片设计上追赶国际水平，国内厂商还需在高速互联技术（如类 NVLink）、大规模集群管理软件、高性能散热供电及定制化数据中心部署方案等多维度深度布局和创新，才能在未来的 AI 算力竞赛中占据一席之地。简而言之，竞争焦点已从“造好芯”拓展到“搭好台”，再到“唱好戏”，最终形成一个无缝连接、高度优化的完整计算生态。
 
