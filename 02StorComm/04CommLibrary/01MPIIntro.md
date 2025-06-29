@@ -1,7 +1,5 @@
 # MPI 通信与通信库
 
-Author by: 刘军
-
 在大模型系统中，集合通信（Collective communication）尤为重要，业界比较重要的就是MPI/OpenMPI。MPI 是集合通信库 XCCL 的基础，包含了很多基本概念和基础 API 定义，方便入门和进一步了解英伟达的 NCCL 和华为的 HCCL。因此本节主要讲解什么是MPI，在MPI通信中有三个比较重要的概念：（1）P2P（Per2Per）通信，也称为点对点通信；（2）CC，collective communication，集合通信；（3）PM（program management），集合通信中的程序和API。
 
 ## MPI通信基本概念
