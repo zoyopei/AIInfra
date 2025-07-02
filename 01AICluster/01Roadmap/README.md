@@ -6,7 +6,7 @@
 
 ## 内容大纲
 
-[](./images/00outline.png)
+![](./images/00outline.png)
 
 ## 详细内容
 
