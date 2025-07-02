@@ -15,7 +15,7 @@ def check_image(img_path):
 
 def resize_image(input_image, limit_w=1200, limit_h=680):
     """
-    调整图片尺寸，限制最大宽度为1000px，最大高度为600px
+    调整图片尺寸，限制最大宽度为 1000px，最大高度为 600px
     """
     original_width, original_height = input_image.size
 
@@ -30,12 +30,12 @@ def resize_image(input_image, limit_w=1200, limit_h=680):
 
 def png_to_jpg(input_image, output_path=None, quality=100):
     """
-    将PNG图片转换为JPG格式，透明背景替换为白色
+    将 PNG 图片转换为 JPG 格式，透明背景替换为白色
     """
     # 创建白色背景画布
     background = Image.new('RGB', input_image.size, (255, 255, 255))
     # 将原图合并到白色背景上
-    background.paste(input_image, mask=input_image.split()[-1])  # 使用alpha通道作为mask
+    background.paste(input_image, mask=input_image.split()[-1])  # 使用 alpha 通道作为 mask
     return background
 
 
