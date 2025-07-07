@@ -12,7 +12,7 @@
 
 与**AISystem**[https://github.com/Infrasys-AI/AISystem] 项目最大的区别就是 **AIInfra** 项目主要针对大模型，特别是大模型在分布式集群、分布式架构、分布式训练、大模型算法等相关领域进行深度展开。
 
-![大模型系统全栈](images/aifoundation01.jpg)
+![大模型系统全栈](static/images/aifoundation01.jpg)
 
 ## 课程内容大纲
 
