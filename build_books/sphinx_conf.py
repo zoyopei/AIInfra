@@ -4,7 +4,7 @@ from urllib.request import urlopen
 from pathlib import Path
 
 project = "AIInfra & AIInfra (大模型系统原理)"
-# copyright = "2024"
+# copyright = "2025"
 # author = "ZOMI"
 language = "cn"  # For testing language translations
 master_doc = "index"
