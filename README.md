@@ -128,6 +128,26 @@ AI 集群云原生篇：容器技术、K8S 编排、AI 云平台与任务调度�
 | 6      | [语音大模型](./06AlgoData/06AudioGenerat) | 语音多模态识别、合成与端到端模型演进及推理应用  |
 | 7      | [数据工程](./06AlgoData/07DataEngineer) | 数据工程、Prompt Engine 等相关技术 |
 
+Transformer 架构的详细内容：
+
+| 大纲 | 小节 | 链接 |
+|:--- |:---- |:-------------------- |
+| Transformer 架构 | 01 Transformer 基础结构 | [PPT](./06AlgoData/01Basic/01Transformer.pdf), [视频](https://www.bilibili.com/video/BV1rt421476q/), [文章](./01Basic/01Transformer.md) |
+| Transformer 架构 | 02 大模型 Tokenizer 算法 | [PPT](./06AlgoData/01Basic/02Tokenizer.pdf), [视频](https://www.bilibili.com/video/BV16pTJz9EV4), [文章](./01Basic/02Tokenizer.md) |
+| Transformer 架构 | 03 大模型 Embedding 算法 | [PPT](./06AlgoData/01Basic/03Embeding.pdf), [视频](https://www.bilibili.com/video/BV1SSTgzLEzf), [文章](./01Basic/03Embeding.md) |
+| Transformer 架构 | 04 Attention 注意力机制 | [PPT](./06AlgoData/01Basic/04Attention.pdf), [视频](https://www.bilibili.com/video/BV11AMHzuEet), [文章](./01Basic/04Attention.md) |
+| Transformer 架构 | 05 Attention 变种算法 | [PPT](./06AlgoData/01Basic/05GQAMLA.pdf), [视频](https://www.bilibili.com/video/BV1GzMUz8Eav), [文章](./01Basic/05GQAMLA.md) |
+| Transformer 架构 | 06 Transformer 长序列架构 | [PPT](./06AlgoData/01Basic/06LongSeq.pdf), [视频](https://www.bilibili.com/video/BV16PN6z6ELg), [文章](./01Basic/06LongSeq.md) |
+|---|----|--------------------|
+| Transformer 架构 | 07 大模型参数设置 | [PPT](./06AlgoData/01Basic/07Parameter.pdf), [视频](https://www.bilibili.com/video/BV1nTNkzjE3J), [文章](./01Basic/07Parameter.md) |
+| Transformer 实践 | 01 搭建迷你 Transformer | [Markdown](./06AlgoData/01Basic/Practice01MiniTranformer.md), [Jupyter](./01Basic/Practice01MiniTranformer.ipynb) |
+| Transformer 实践 | 02 从零实现 Transformer 训练 | [Markdown](./06AlgoData/01Basic/Practice02TransformerTrain.md), [Jupyter](./01Basic/Practice02TransformerTrain.ipynb) |
+| Transformer 实践 | 03 实战 Transformer 机器翻译 | [Markdown](./06AlgoData/01Basic/Practice03MachineTrans.md), [Jupyter](./01Basic/Practice03MachineTrans.ipynb) |
+| Transformer 实践 | 04 手把手实现核心机制 Sinusoidal 编码 | [Markdown](./06AlgoData/01Basic/Practice04Sinusoidal.md), [Jupyter](./01Basic/Practice04Sinusoidal.ipynb) |
+| Transformer 实践 | 05 手把手实现核心机制 BPE 分词算法 | [Markdown](./06AlgoData/01Basic/Practice05BPE.md), [Jupyter](.01Basic/Practice05BPE.ipynb) |
+| Transformer 实践 | 06 手把手实现核心机制 Embedding 词嵌入 | [Markdown](./06AlgoData/01Basic/Practice06Embedding.md), [Jupyter](./01Basic/Practice06Embedding.ipynb) |
+| Transformer 实践 | 07 深入注意力机制 MHA、MQA、GQA、MLA | [Markdown](./06AlgoData/01Basic/Practice07Attention.md), [Jupyter](./01Basic/Practice07Attention.ipynb) |
+
 ### **[07. 大模型应用](./07Application/)**
 
 大模型应用篇：AI Agent 技术、RAG 检索增强生成与 GraphRAG，推动智能体与知识增强应用落地。
