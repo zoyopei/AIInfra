@@ -8,19 +8,19 @@
 
 > 建议优先下载 PDF 版本，PPT 版本会因为字体缺失等原因导致版本很丑哦~
 
-
-| 大纲 | 小节 | 链接 |
-|:--- |:---- |:-------------------- |
-| 创新架构 | 0  | [PPT](), [视频]() |
-|:sparkling_heart:|:star2:|:sparkling_heart:|
-| 创新架构实践 :computer: | 01  | [Markdown](), [Jupyter]() |
+| 大纲 | 小节 | 链接 | 状态 |
+|:--- |:---- |:-------------------- |:---- |
+| 创新架构 | 01 打破 Transformer 架构垄断 | [PPT](./01NewArch.pdf), [视频](https://www.bilibili.com/video/BV12EtRe4Ech/) | :white_check_mark: |
+| 创新架构 | 02 Linear Transformer 线性层 | [PPT](./02LinearAtt.pdf), [视频](https://www.bilibili.com/video/BV1V7s9etEmQ) | :white_check_mark: |
+|:sparkling_heart:|:star2:|:sparkling_heart:| |
+| 代码实践 :computer: | 01 基于 RWKV 的 RNN 范式革新 | [Markdown](./Practice01RWKV.md), [Jupyter](./notebook/Practice01RWKV.ipynb) | :white_check_mark: |
+| 代码实践 :computer: | 02 Mamba 状态空间模型 | [Markdown](./Practice02Mamba.md), [Jupyter](./notebook/Practice02Mamba.ipynb) | :white_check_mark: |
+| 代码实践 :computer: | 03 RetNet：混合训练实战 | [Markdown](./Practice03RetNet.md), [Jupyter](./notebook/Practice03RetNet.ipynb) | :white_check_mark: |
 
 ## 备注
 
-系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/Infrasys-AI/AIInfra)，欢迎取用！！！
+系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/Infrasys-AI/AIInfra)，欢迎引用！
 
-> 非常希望您也参与到这个开源课程中，先给 github 点赞，然后 B 站给 ZOMI 留言哦！
+> 非常希望您参与到这个开源课程中，B 站给 ZOMI 留言哦！
 >
-> 欢迎大家使用的过程中发现 bug 或者勘误直接提交代码 PR 到开源社区哦！
->
-> 希望这个系列能够给大家、朋友们带来一些些帮助，也希望自己能够继续坚持完成所有内容哈！
+> 欢迎发现 bug 或者勘误直接提交代码 PR 到社区哦！

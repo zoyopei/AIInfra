@@ -1,9 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 预训练 Scaling Law
-
->>>>>>>>>>>>>
-后面记得补充作者信息
+# 大模型 Scaling Law
 
 - Author by：侯宇博
 
