@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# CODE 03: Pipeline 并行实践
+# CODE 03: Pipeline 并行实践(DONE)
 
 > Author by: 许灿岷
 

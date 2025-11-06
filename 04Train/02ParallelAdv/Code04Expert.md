@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# CODE 04: 专家并行大规模训练
+# CODE 04: 专家并行大规模训练(DONE)
 
 > Author by: 许灿岷
 
