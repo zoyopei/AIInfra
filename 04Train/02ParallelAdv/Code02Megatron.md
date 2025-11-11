@@ -548,102 +548,549 @@ def train_example():
                 pass
             dist.destroy_process_group()
 
+```
+
+下面的这个代码块是为了自动生成分布式训练脚本：
+
+
+```python
+%%writefile Code02Megatron.py
+"""
+============================================
+Megatron 张量并行分布式训练脚本
+============================================
+本脚本从 Jupyter Notebook 自动生成，用于多GPU分布式训练
+"""
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.distributed as dist
+from torch.nn.parameter import Parameter
+import os
+import socket
+import sys
+
+def init_distributed():
+    """初始化分布式环境"""
+    if not dist.is_available():
+        raise RuntimeError("Distributed package is not available.")
+
+    # Set NCCL environment variables
+    os.environ["NCCL_DEBUG"] = os.environ.get("NCCL_DEBUG", "WARN")
+    os.environ["NCCL_SOCKET_IFNAME"] = os.environ.get("NCCL_SOCKET_IFNAME", "^docker0,lo")
+    os.environ["NCCL_IB_DISABLE"] = os.environ.get("NCCL_IB_DISABLE", "1")
+    os.environ["NCCL_P2P_DISABLE"] = os.environ.get("NCCL_P2P_DISABLE", "0")
+    os.environ["TORCH_NCCL_ASYNC_ERROR_HANDLING"] = os.environ.get("TORCH_NCCL_ASYNC_ERROR_HANDLING", "1")
+
+    rank = int(os.environ.get("RANK", "0"))
+    world_size = int(os.environ.get("WORLD_SIZE", "1"))
+
+    print(f"Rank: {rank}, World size: {world_size}")
+
+    backend = 'nccl' if torch.cuda.is_available() else 'gloo'
+    import datetime
+    timeout_minutes = int(os.environ.get("TORCH_DIST_TIMEOUT_MINUTES", "30"))
+
+    try:
+        dist.init_process_group(
+            backend=backend,
+            init_method="env://",
+            world_size=world_size,
+            rank=rank,
+            timeout=datetime.timedelta(minutes=timeout_minutes)
+        )
+        print(f"Rank {rank}: Successfully initialized with {backend} backend")
+    except Exception as e:
+        print(f"Rank {rank}: Failed to initialize: {str(e)}", file=sys.stderr)
+        raise
+
+    local_rank = int(os.environ.get("LOCAL_RANK", rank % torch.cuda.device_count()))
+    torch.cuda.set_device(local_rank)
+    if torch.cuda.is_available():
+        torch.cuda.synchronize()
+
+    return dist.get_rank(), dist.get_world_size()
+
+
+class AllGather(torch.autograd.Function):
+    """All-Gather 操作"""
+    @staticmethod
+    def forward(ctx, x):
+        ctx.world_size = dist.get_world_size()
+        gathered = [torch.zeros_like(x) for _ in range(ctx.world_size)]
+        dist.all_gather(gathered, x)
+        return torch.cat(gathered, dim=-1)
+
+    @staticmethod
+    def backward(ctx, grad):
+        return grad.chunk(ctx.world_size, dim=-1)[dist.get_rank()]
+
+
+class AllReduce(torch.autograd.Function):
+    """AllReduce操作"""
+    @staticmethod
+    def forward(ctx, x):
+        output = x.clone()
+        dist.all_reduce(output, op=dist.ReduceOp.SUM)
+        return output
+
+    @staticmethod
+    def backward(ctx, grad):
+        output = grad.clone()
+        dist.all_reduce(output, op=dist.ReduceOp.SUM)
+        return output
+
+
+class ColumnLinear(nn.Module):
+    """列并行线性层"""
+    def __init__(self, in_dim, out_dim, world_size, rank):
+        super().__init__()
+        self.local_out_dim = out_dim // world_size
+        self.weight = Parameter(torch.Tensor(self.local_out_dim, in_dim))
+        self.bias = Parameter(torch.Tensor(self.local_out_dim))
+        nn.init.xavier_uniform_(self.weight)
+        nn.init.zeros_(self.bias)
+
+    def forward(self, x):
+        local_out = F.linear(x, self.weight, self.bias)
+        return local_out
+
+
+class RowLinear(nn.Module):
+    """行并行线性层"""
+    def __init__(self, in_dim, out_dim, world_size, rank):
+        super().__init__()
+        self.local_in_dim = in_dim // world_size
+        self.weight = Parameter(torch.Tensor(out_dim, self.local_in_dim))
+        self.bias = Parameter(torch.Tensor(out_dim))
+        nn.init.xavier_uniform_(self.weight)
+        nn.init.zeros_(self.bias)
+
+    def forward(self, x):
+        input_chunks = x.chunk(dist.get_world_size(), dim=-1)
+        local_input = input_chunks[dist.get_rank()]
+        local_output = F.linear(local_input, self.weight, self.bias)
+        return AllReduce.apply(local_output)
+
+
+class ParallelMLP(nn.Module):
+    """并行 MLP 层"""
+    def __init__(self, hidden_size, ffn_size, world_size, rank):
+        super().__init__()
+        self.fc1 = ColumnLinear(hidden_size, ffn_size, world_size, rank)
+        self.fc2 = RowLinear(ffn_size, hidden_size, world_size, rank)
+
+    def forward(self, x):
+        intermediate = self.fc1(x)
+        intermediate_full = AllGather.apply(intermediate)
+        activated = F.gelu(intermediate_full)
+        return self.fc2(activated)
+
+
+class ParallelAttention(nn.Module):
+    """并行 Attention 层"""
+    def __init__(self, hidden_size, num_heads, world_size, rank):
+        super().__init__()
+        assert hidden_size % num_heads == 0
+        assert num_heads % world_size == 0
+
+        self.head_dim = hidden_size // num_heads
+        self.num_heads = num_heads
+        self.world_size = world_size
+        self.local_heads = num_heads // world_size
+
+        self.q_proj = ColumnLinear(hidden_size, hidden_size, world_size, rank)
+        self.k_proj = ColumnLinear(hidden_size, hidden_size, world_size, rank)
+        self.v_proj = ColumnLinear(hidden_size, hidden_size, world_size, rank)
+        self.out_proj = RowLinear(hidden_size, hidden_size, world_size, rank)
+
+    def forward(self, x, mask=None):
+        B, S, _ = x.shape
+
+        q = self.q_proj(x)
+        k = self.k_proj(x)
+        v = self.v_proj(x)
+
+        q = q.view(B, S, self.local_heads, self.head_dim).transpose(1, 2)
+        k = k.view(B, S, self.local_heads, self.head_dim).transpose(1, 2)
+        v = v.view(B, S, self.local_heads, self.head_dim).transpose(1, 2)
+
+        attn_scores = torch.matmul(q, k.transpose(-2, -1)) / (self.head_dim ** 0.5)
+        if mask is not None:
+            attn_scores += mask
+        attn_weights = F.softmax(attn_scores, dim=-1)
+        attn_output = torch.matmul(attn_weights, v)
+
+        attn_output = attn_output.transpose(1, 2).contiguous()
+        attn_output = attn_output.view(B, S, self.local_heads * self.head_dim)
+        complete_attn_output = AllGather.apply(attn_output)
+
+        return self.out_proj(complete_attn_output)
+
+
+class ParallelTransformerBlock(nn.Module):
+    """并行 Transformer 块"""
+    def __init__(self, hidden_size, num_heads, ffn_size, world_size, rank):
+        super().__init__()
+        self.attn = ParallelAttention(hidden_size, num_heads, world_size, rank)
+        self.mlp = ParallelMLP(hidden_size, ffn_size, world_size, rank)
+        self.norm1 = nn.LayerNorm(hidden_size)
+        self.norm2 = nn.LayerNorm(hidden_size)
+
+    def forward(self, x, mask=None):
+        x = x + self.attn(self.norm1(x), mask)
+        return x + self.mlp(self.norm2(x))
+
+
+class ParallelEmbedding(nn.Module):
+    """并行 Embedding 层"""
+    def __init__(self, vocab_size, embed_dim, world_size, rank):
+        super().__init__()
+        self.vocab_size = vocab_size
+        self.embed_dim = embed_dim
+        self.world_size = world_size
+        self.rank = rank
+
+        part_size = vocab_size // world_size
+        remainder = vocab_size % world_size
+        self.start_idx = rank * part_size + min(rank, remainder)
+        self.end_idx = self.start_idx + part_size + (1 if rank < remainder else 0)
+        self.local_vocab_size = self.end_idx - self.start_idx
+
+        self.embedding = nn.Embedding(self.local_vocab_size, embed_dim)
+
+    def forward(self, input):
+        local_input = input.clone() - self.start_idx
+        mask = (input >= self.start_idx) & (input < self.end_idx)
+        local_input[~mask] = 0
+
+        local_emb = self.embedding(local_input)
+        local_emb[~mask] = 0
+
+        return AllReduce.apply(local_emb)
+
+
+class ParallelTransformer(nn.Module):
+    """完整的并行 Transformer 模型"""
+    def __init__(self, vocab_size, hidden_size, num_layers, num_heads, ffn_size, world_size, rank):
+        super().__init__()
+        self.embedding = ParallelEmbedding(vocab_size, hidden_size, world_size, rank)
+        self.pos_embed = nn.Parameter(torch.randn(1, 1024, hidden_size))
+        self.layers = nn.ModuleList([
+            ParallelTransformerBlock(hidden_size, num_heads, ffn_size, world_size, rank)
+            for _ in range(num_layers)
+        ])
+        self.norm = nn.LayerNorm(hidden_size)
+        self.head = ColumnLinear(hidden_size, vocab_size, world_size, rank)
+
+    def forward(self, input_ids):
+        x = self.embedding(input_ids) + self.pos_embed[:, :input_ids.size(1)]
+        for layer in self.layers:
+            x = layer(x)
+        local_logits = self.head(self.norm(x))
+        return AllGather.apply(local_logits)
+
+
+def create_sequence_memory_task(vocab_size=512, seq_len=32, num_sequences=100):
+    """创建序列记忆任务"""
+    torch.manual_seed(42)
+    sequences = []
+    for i in range(num_sequences):
+        seq = torch.randint(0, vocab_size, (seq_len,))
+        sequences.append(seq)
+    return torch.stack(sequences)
+
+
+def train_example():
+    """训练示例"""
+    if not torch.cuda.is_available():
+        raise RuntimeError("CUDA is not available.")
+
+    try:
+        rank, world_size = init_distributed()
+
+        gpu_count = torch.cuda.device_count()
+        if gpu_count < world_size:
+            raise RuntimeError(f"Not enough GPUs. Required: {world_size}, Available: {gpu_count}")
+
+        if rank == 0:
+            print(f"\n{'='*60}")
+            print(f"Megatron 张量并行验证")
+            print(f"{'='*60}")
+            print(f"GPU数量: {world_size}")
+            print(f"主机名: {socket.gethostname()}")
+
+        dist.barrier()
+
+        config = {
+            'vocab_size': 1024,
+            'hidden_size': 512,
+            'num_layers': 8,
+            'num_heads': 8,
+            'ffn_size': 1024,
+        }
+
+        model = ParallelTransformer(
+            vocab_size=config['vocab_size'],
+            hidden_size=config['hidden_size'],
+            num_layers=config['num_layers'],
+            num_heads=config['num_heads'],
+            ffn_size=config['ffn_size'],
+            world_size=world_size,
+            rank=rank
+        ).cuda()
+
+        if rank == 0:
+            total_params = sum(p.numel() for p in model.parameters())
+            print(f"\n模型配置:")
+            print(f"  - Vocab: {config['vocab_size']}, Hidden: {config['hidden_size']}")
+            print(f"  - Layers: {config['num_layers']}, Heads: {config['num_heads']}")
+            print(f"  - 参数量: {total_params:,} (每GPU约 {total_params//(world_size*4):,})")
+
+        dist.barrier()
+
+        optimizer = torch.optim.Adam(model.parameters(), lr=3e-4)
+
+        train_data = create_sequence_memory_task(
+            vocab_size=config['vocab_size'],
+            seq_len=32,
+            num_sequences=100
+        )
+
+        if rank == 0:
+            print(f"\n训练任务: 序列记忆")
+            print(f"  - 训练序列数: {train_data.shape[0]}")
+            print(f"  - 序列长度: {train_data.shape[1]}")
+            print(f"  - 词汇表大小: {config['vocab_size']}")
+            print(f"\n开始训练...")
+            print(f"{'-'*60}")
+
+        dist.barrier()
+
+        num_epochs = 5
+        steps_per_epoch = 100
+        best_loss = float('inf')
+        peak_memory = 0.0
+
+        for epoch in range(num_epochs):
+            epoch_loss = 0.0
+
+            for step in range(steps_per_epoch):
+                batch_size = 16
+                indices = torch.randint(0, len(train_data), (batch_size,))
+                input_ids = train_data[indices].cuda()
+
+                logits = model(input_ids)
+
+                loss = F.cross_entropy(
+                    logits.view(-1, config['vocab_size']),
+                    input_ids.view(-1)
+                )
+
+                optimizer.zero_grad()
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+                optimizer.step()
+
+                epoch_loss += loss.item()
+
+                if torch.cuda.is_available():
+                    current_mem = torch.cuda.max_memory_allocated() / 1024**2
+                    peak_memory = max(peak_memory, current_mem)
+
+                if rank == 0 and step % 20 == 0:
+                    avg_loss = epoch_loss / (step + 1)
+                    print(f"Epoch {epoch+1}/{num_epochs}, Step {step:3d}/{steps_per_epoch}, Loss: {loss.item():.4f}, Avg: {avg_loss:.4f}")
+
+            avg_epoch_loss = epoch_loss / steps_per_epoch
+
+            if rank == 0:
+                improvement = "" if epoch == 0 else f" (↓{best_loss - avg_epoch_loss:.4f})"
+                print(f"{'='*60}")
+                print(f"Epoch {epoch+1} 完成 - 平均Loss: {avg_epoch_loss:.4f}{improvement}")
+                print(f"{'='*60}\n")
+
+                if avg_epoch_loss < best_loss:
+                    best_loss = avg_epoch_loss
+
+        if rank == 0:
+            print(f"\n{'='*60}")
+            print(f"✅ 训练完成!")
+            print(f"   最佳Loss: {best_loss:.4f}")
+            print(f"   最终Loss: {avg_epoch_loss:.4f}")
+            print(f"   峰值显存: {peak_memory:.2f} MB ({peak_memory/1024:.2f} GB)")
+            print(f"{'='*60}")
+
+    except Exception as e:
+        error_rank = dist.get_rank() if dist.is_initialized() else 0
+        print(f"Rank {error_rank} encountered error: {str(e)}", flush=True)
+        import traceback
+        traceback.print_exc()
+        if dist.is_initialized():
+            dist.barrier()
+        raise e
+    finally:
+        if dist.is_initialized():
+            try:
+                dist.barrier()
+            except:
+                pass
+            dist.destroy_process_group()
+
+
 if __name__ == "__main__":
     train_example()
-```
-
-
-这里我们先运行一个jupyter的命令，提取jupyter文件中的Python代码块到一个新的python文件当中:
-
-```bash
-jupyter nbconvert --to python Code02Megatron.ipynb
-```
-
-由于jupyter文件不适合运行多线程，也就不适合进行分布式训练，这里提供torchrun脚本进行分布式训练。
-
-以下是运行训练的bash脚本：
-
-```bash
-#!/bin/bash
-set -e
-
-echo "=============================================="
-echo "4GPU张量并行测试"
-echo "=============================================="
-
-# 配置参数
-NUM_GPUS=4
-MASTER_PORT=29501
-
-echo ""
-echo "配置信息:"
-echo "  - GPU数量: $NUM_GPUS"
-echo "  - Master端口: $MASTER_PORT"
-echo "  - 模式: Megatron张量并行"
-echo "  - 用途: 显存占用对比测试"
-echo ""
-
-# 检查GPU可用性
-echo "检查GPU状态..."
-nvidia-smi --query-gpu=index,name,memory.total --format=csv
-echo ""
-
-# 启动分布式训练
-echo "启动4GPU并行训练..."
-echo "=============================================="
-torchrun \
-    --nproc_per_node=$NUM_GPUS \
-    --master_port=$MASTER_PORT \
-    Code02Megatron.py
 
 ```
 
-以下是在4个GPU的分布式环境下执行后的最终输出：
+    Writing Code02Megatron.py
+    
+
+## 8. 在 Jupyter 中执行分布式训练
+
+由于 Jupyter Notebook 不支持直接运行多进程代码，我们使用 `%%writefile` 魔法命令将训练代码导出为独立的 Python 文件，然后通过 `torchrun` 在 Jupyter 中启动分布式训练。
+
+上面的代码块已经将完整的训练代码保存为 `megatron_distributed_train.py`。现在可以直接在 Jupyter 中执行：
+
+
+```python
+import os
+
+# 配置 GPU 数量和端口
+NUM_GPUS = 4
+MASTER_PORT = 29501
+MASTER_ADDR = "localhost"
+
+print(f"启动 {NUM_GPUS} GPU 分布式训练...")
+print(f"Master 地址: {MASTER_ADDR}")
+print(f"Master 端口: {MASTER_PORT}")
+print("=" * 60)
+
+# 检查是否存在训练脚本
+if not os.path.exists('Code02Megatron.py'):
+    print("错误: Code02Megatron.py 不存在！请先运行上面的 %%writefile 代码块。")
+else:
+    # 使用 os.system 执行 torchrun（确保在 shell 中执行）
+    cmd = f"torchrun --nproc_per_node={NUM_GPUS} --master_addr={MASTER_ADDR} --master_port={MASTER_PORT} Code02Megatron.py"
+    print(f"执行命令: {cmd}\n")
+    exit_code = os.system(cmd)
+
+    if exit_code != 0:
+        print(f"\n训练失败，退出码: {exit_code}")
+
+"""
+运行训练结束后，自动删除临时脚本Code02Megatron.py
+"""
+if os.path.exists('Code02Megatron.py'):
+    print("残留Code02Megatron.py，自动删除。")
+    os.remove('Code02Megatron.py')
+```
+
+    启动 4 GPU 分布式训练...
+    Master 地址: localhost
+    Master 端口: 29501
+    ============================================================
+    执行命令: torchrun --nproc_per_node=4 --master_addr=localhost --master_port=29501 Code02Megatron.py
+    
+    Rank: 0, World size: 4
+    Rank 0: Successfully initialized with nccl backend
+    Rank: 3, World size: 4
+    Rank: 1, World size: 4
+    Rank: 2, World size: 4
+    Rank 3: Successfully initialized with nccl backend
+    Rank 2: Successfully initialized with nccl backend
+    Rank 1: Successfully initialized with nccl backend
+    
+    ============================================================
+    Megatron 张量并行验证
+    ============================================================
+    GPU数量: 4
+    主机名: autodl-container-352c469ce5-0262aef0
+    NCCL version 2.21.5+cuda12.4
+    
+
+    [rank0]:[W1107 23:05:28.294109999 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 0]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+    [rank3]:[W1107 23:05:29.461084968 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 3]  using GPU 3 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+    [rank1]:[W1107 23:05:29.475599499 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 1]  using GPU 1 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+    [rank2]:[W1107 23:05:29.487187507 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 2]  using GPU 2 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+    
+
+    
+    模型配置:
+      - Vocab: 1024, Hidden: 512
+      - Layers: 8, Heads: 8
+      - 参数量: 5,011,712 (每GPU约 313,232)
+    
+    训练任务: 序列记忆
+      - 训练序列数: 100
+      - 序列长度: 32
+      - 词汇表大小: 1024
+    
+    开始训练...
+    ------------------------------------------------------------
+    Epoch 1/5, Step   0/100, Loss: 7.6181, Avg: 7.6181
+    Epoch 1/5, Step  20/100, Loss: 3.1313, Avg: 5.0970
+    Epoch 1/5, Step  40/100, Loss: 0.2469, Avg: 3.0900
+    Epoch 1/5, Step  60/100, Loss: 0.0193, Avg: 2.0979
+    Epoch 1/5, Step  80/100, Loss: 0.0129, Avg: 1.5855
+    ============================================================
+    Epoch 1 完成 - 平均Loss: 1.2859
+    ============================================================
+    
+    Epoch 2/5, Step   0/100, Loss: 0.0081, Avg: 0.0081
+    Epoch 2/5, Step  20/100, Loss: 0.0062, Avg: 0.0069
+    Epoch 2/5, Step  40/100, Loss: 0.0045, Avg: 0.0060
+    Epoch 2/5, Step  60/100, Loss: 0.0045, Avg: 0.0055
+    Epoch 2/5, Step  80/100, Loss: 0.0035, Avg: 0.0051
+    ============================================================
+    Epoch 2 完成 - 平均Loss: 0.0047 (↓1.2812)
+    ============================================================
+    
+    Epoch 3/5, Step   0/100, Loss: 0.0032, Avg: 0.0032
+    Epoch 3/5, Step  20/100, Loss: 0.0029, Avg: 0.0030
+    Epoch 3/5, Step  40/100, Loss: 0.0025, Avg: 0.0028
+    Epoch 3/5, Step  60/100, Loss: 0.0025, Avg: 0.0027
+    Epoch 3/5, Step  80/100, Loss: 0.0021, Avg: 0.0026
+    ============================================================
+    Epoch 3 完成 - 平均Loss: 0.0025 (↓0.0022)
+    ============================================================
+    
+    Epoch 4/5, Step   0/100, Loss: 0.0020, Avg: 0.0020
+    Epoch 4/5, Step  20/100, Loss: 0.0017, Avg: 0.0019
+    Epoch 4/5, Step  40/100, Loss: 0.0018, Avg: 0.0018
+    Epoch 4/5, Step  60/100, Loss: 0.0017, Avg: 0.0018
+    Epoch 4/5, Step  80/100, Loss: 0.0014, Avg: 0.0017
+    ============================================================
+    Epoch 4 完成 - 平均Loss: 0.0017 (↓0.0008)
+    ============================================================
+    
+    Epoch 5/5, Step   0/100, Loss: 0.0014, Avg: 0.0014
+    Epoch 5/5, Step  20/100, Loss: 0.0013, Avg: 0.0013
+    Epoch 5/5, Step  40/100, Loss: 0.0013, Avg: 0.0013
+    Epoch 5/5, Step  60/100, Loss: 0.0012, Avg: 0.0013
+    Epoch 5/5, Step  80/100, Loss: 0.0010, Avg: 0.0012
+    ============================================================
+    Epoch 5 完成 - 平均Loss: 0.0012 (↓0.0005)
+    ============================================================
+    
+    
+    ============================================================
+    ✅ 训练完成!
+       最佳Loss: 0.0012
+       最终Loss: 0.0012
+       峰值显存: 180.30 MB (0.18 GB)
+    ============================================================
+    
+
+另外，单GPU情况下的训练输出为：
 
 ```
-==============================================
-4GPU张量并行测试
-==============================================
-
-配置信息:
-  - GPU数量: 4
-  - Master端口: 29501
-  - 模式: Megatron张量并行
-  - 用途: 显存占用对比测试
-
-检查GPU状态...
-index, name, memory.total [MiB]
-0, NVIDIA GeForce RTX 2080 Ti, 11264 MiB
-1, NVIDIA GeForce RTX 2080 Ti, 11264 MiB
-2, NVIDIA GeForce RTX 2080 Ti, 11264 MiB
-3, NVIDIA GeForce RTX 2080 Ti, 11264 MiB
-
-启动4GPU并行训练...
-==============================================
-Rank: 1, World size: 4
-Rank: 0, World size: 4
-Rank: 2, World size: 4
-Rank: 3, World size: 4
-Rank 1: Successfully initialized with nccl backend
-Rank 3: Successfully initialized with nccl backend
-Rank 0: Successfully initialized with nccl backend
-Rank 2: Successfully initialized with nccl backend
-[rank1]:[W1105 13:37:10.134661876 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 1]  using GPU 1 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
-
-============================================================
-Megatron 张量并行验证
-============================================================
-GPU数量: 4
-主机名: autodl-container-fa394eb8f4-296cf614
-[rank3]:[W1105 13:37:10.148326282 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 3]  using GPU 3 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
-[rank2]:[W1105 13:37:10.148474172 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 2]  using GPU 2 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
-[rank0]:[W1105 13:37:10.148670612 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 0]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
-NCCL version 2.21.5+cuda12.4
+GPU数量: 1
 
 模型配置:
   - Vocab: 1024, Hidden: 512
   - Layers: 8, Heads: 8
-  - 参数量: 7,110,912 (每GPU约 444,432)
+  - 参数量: 18,397,184 (每GPU约 4,599,296)
 
 训练任务: 序列记忆
   - 训练序列数: 100
@@ -652,76 +1099,33 @@ NCCL version 2.21.5+cuda12.4
 
 开始训练...
 ------------------------------------------------------------
-Epoch 1/5, Step   0/100, Loss: 7.6680, Avg: 7.6680
-Epoch 1/5, Step  20/100, Loss: 2.1710, Avg: 4.2445
-Epoch 1/5, Step  40/100, Loss: 0.0844, Avg: 2.4003
-Epoch 1/5, Step  60/100, Loss: 0.0101, Avg: 1.6213
-Epoch 1/5, Step  80/100, Loss: 0.0070, Avg: 1.2238
-============================================================
-Epoch 1 完成 - 平均Loss: 0.9922
-============================================================
+Epoch 1/5, Step   0/100, Loss: 7.2590, Avg: 7.2590
+Epoch 1/5, Step  20/100, Loss: 2.8188, Avg: 4.6222
+...
 
-Epoch 2/5, Step   0/100, Loss: 0.0049, Avg: 0.0049
-Epoch 2/5, Step  20/100, Loss: 0.0036, Avg: 0.0041
-Epoch 2/5, Step  40/100, Loss: 0.0030, Avg: 0.0037
-Epoch 2/5, Step  60/100, Loss: 0.0028, Avg: 0.0033
-Epoch 2/5, Step  80/100, Loss: 0.0022, Avg: 0.0031
 ============================================================
-Epoch 2 完成 - 平均Loss: 0.0029 (↓0.9893)
-============================================================
-
-Epoch 3/5, Step   0/100, Loss: 0.0021, Avg: 0.0021
-Epoch 3/5, Step  20/100, Loss: 0.0018, Avg: 0.0019
-Epoch 3/5, Step  40/100, Loss: 0.0016, Avg: 0.0018
-Epoch 3/5, Step  60/100, Loss: 0.0016, Avg: 0.0017
-Epoch 3/5, Step  80/100, Loss: 0.0014, Avg: 0.0017
-============================================================
-Epoch 3 完成 - 平均Loss: 0.0016 (↓0.0013)
-============================================================
-
-Epoch 4/5, Step   0/100, Loss: 0.0013, Avg: 0.0013
-Epoch 4/5, Step  20/100, Loss: 0.0012, Avg: 0.0012
-Epoch 4/5, Step  40/100, Loss: 0.0011, Avg: 0.0012
-Epoch 4/5, Step  60/100, Loss: 0.0011, Avg: 0.0011
-Epoch 4/5, Step  80/100, Loss: 0.0009, Avg: 0.0011
-============================================================
-Epoch 4 完成 - 平均Loss: 0.0011 (↓0.0005)
-============================================================
-
-Epoch 5/5, Step   0/100, Loss: 0.0009, Avg: 0.0009
-Epoch 5/5, Step  20/100, Loss: 0.0009, Avg: 0.0009
-Epoch 5/5, Step  40/100, Loss: 0.0008, Avg: 0.0009
-Epoch 5/5, Step  60/100, Loss: 0.0008, Avg: 0.0008
-Epoch 5/5, Step  80/100, Loss: 0.0007, Avg: 0.0008
-============================================================
-Epoch 5 完成 - 平均Loss: 0.0008 (↓0.0003)
+Epoch 5 完成 - 平均Loss: 0.0013 (↓0.0005)
 ============================================================
 
 
 ============================================================
 ✅ 训练完成!
-   最佳Loss: 0.0008
-   最终Loss: 0.0008
-   Loss下降: 10.0000 → 0.0008
-   峰值显存: 244.33 MB (0.24 GB)
+   最佳Loss: 0.0013
+   最终Loss: 0.0013
+   峰值显存: 407.04 MB (0.40 GB)
 ============================================================
 
 ```
 
-训练过程中，仅`rank=0`每 100 步打印损失值，模型从随机初始化的高损失逐渐下降。
-
-另外，单GPU情况下的训练输出为：
+双GPU情况下输出为：
 
 ```
-============================================================
-单GPU基准测试（无张量并行）
-============================================================
-使用设备: cuda:0
+GPU数量: 2
 
 模型配置:
   - Vocab: 1024, Hidden: 512
   - Layers: 8, Heads: 8
-  - 总参数量: 26,793,984
+  - 参数量: 9,473,536 (每GPU约 1,184,192)
 
 训练任务: 序列记忆
   - 训练序列数: 100
@@ -729,23 +1133,60 @@ Epoch 5 完成 - 平均Loss: 0.0008 (↓0.0003)
   - 词汇表大小: 1024
 
 开始训练...
+------------------------------------------------------------
+Epoch 1/5, Step   0/100, Loss: 7.4521, Avg: 7.4521
+Epoch 1/5, Step  20/100, Loss: 3.0226, Avg: 4.8753
 ...
 ============================================================
-✅ 训练完成!
-   最佳Loss: 0.0023
-   最终Loss: 0.0023
-   Loss下降: 10.0000 → 0.0023
-   峰值显存: 564.16 MB (0.55 GB)
+Epoch 5 完成 - 平均Loss: 0.0012 (↓0.0005)
 ============================================================
-
+============================================================
+✅ 训练完成!
+   最佳Loss: 0.0012
+   最终Loss: 0.0012
+   峰值显存: 255.88 MB (0.25 GB)
+============================================================
 ```
 
-TP 的核心优势是**降低单卡内存占用**。以`world_size=4`为例，对比单卡训练与 4 卡 TP 的内存峰值：
+四GPU情况下的示例输出：
+```
+GPU数量: 4
 
-| 训练模式       | 单卡内存占用（峰值） | 2 卡 TP 单卡内存占用（峰值） | 内存节省比例 |
-|----------------|----------------------|---------------------------------|--------------|
-| 无并行（单卡） | ~564MB                | -                               | -            |
-| 4 卡 TP     | -                    | ~244MB                             | ~56.7%       |
+模型配置:
+  - Vocab: 1024, Hidden: 512
+  - Layers: 8, Heads: 8
+  - 参数量: 5,011,712 (每GPU约 313,232)
+
+训练任务: 序列记忆
+  - 训练序列数: 100
+  - 序列长度: 32
+  - 词汇表大小: 1024
+
+开始训练...
+------------------------------------------------------------
+Epoch 1/5, Step   0/100, Loss: 7.6181, Avg: 7.6181
+Epoch 1/5, Step  20/100, Loss: 3.1313, Avg: 5.0970
+...
+============================================================
+Epoch 5 完成 - 平均Loss: 0.0012 (↓0.0005)
+============================================================
+
+
+============================================================
+✅ 训练完成!
+   最佳Loss: 0.0012
+   最终Loss: 0.0012
+   峰值显存: 180.30 MB (0.18 GB)
+============================================================
+```
+
+TP 的核心优势是**降低单卡内存占用**。以下是不同情况下的内存占用情况：
+
+| 训练模式       | 内存占用（峰值） | 内存节省比例 |
+|----------------|----------------|--------------|
+| 无并行（单卡） | ~407.04MB           | -           |
+| 2 卡 TP       | ~255.88MB        | ~37.34%       |
+| 4 卡 TP       | ~180.30MB        | ~55.70%       |
 
 ## 总结与思考
 

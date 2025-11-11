@@ -13,106 +13,57 @@
 - **PyTorch >= 1.12** (支持torch.distributed)
 - **CUDA >= 11.0**
 - **至少2个GPU** (建议4个以上)
-- **启动方式**:
+- **运行方式**: 
 
-    - *在多GPU环境运行：*
-        ```bash
-        torchrun --nproc_per_node=4 \
-        -m jupyter nbconvert \
-        --to notebook \
-        --execute Code01ZeRO.ipynb
-        ```
+    本notebook采用**单文件运行**方式，通过以下机制实现分布式训练：
+    
+    1. 使用 `%%writefile` 创建临时Python脚本
+    2. 自动调用 `torchrun` 启动分布式训练
+    3. 训练完成后自动删除临时脚本
+    
+    **适用场景**：
+    - 远程服务器（Unix/Linux）
+    - Docker容器环境
+    - Jupyter Notebook环境
+    
+    **使用方法**：
+    - 直接运行notebook中的所有cell即可
+    - 系统会自动检测GPU数量并启动相应数量的进程
+    - 无需手动运行torchrun命令
+    
 
-    - *或者转换为Python脚本：*
-        ```bash
-        jupyter nbconvert --to script Code01ZeRO.ipynb \
-        torchrun --nproc_per_node=4 Code01ZeRO.py
-        ```
+检测运行环境：
 
-初始化分布式环境:
 
 ```python
 import os
-import sys
 import torch
-import torch.distributed as dist
-import torch.multiprocessing as mp
-from typing import Optional
 
-def init_distributed(rank: Optional[int] = None, world_size: Optional[int] = None):
-    """
-    初始化分布式环境
+# 检测GPU数量
+gpu_count = torch.cuda.device_count()
+print(f"检测到 {gpu_count} 个GPU")
 
-    参数:
-        rank: 当前进程的rank（如使用torchrun则自动从环境变量获取）
-        world_size: 总进程数（如使用torchrun则自动从环境变量获取）
-    """
+if gpu_count >= 2:
+    print(f"✅ 多GPU环境，将使用 torchrun 启动分布式训练 (建议使用 {gpu_count} 个GPU)")
+    print("📝 后续实验将通过 %%writefile 创建临时脚本，自动运行 torchrun，并清理临时文件")
+else:
+    print("⚠️  警告: 检测到少于2个GPU，分布式训练可能无法正常运行")
 
-    # 检查是否已初始化
-    if dist.is_initialized():
-        print(f"[Rank {dist.get_rank()}] 分布式环境已初始化")
-        return
-
-    # 从环境变量获取配置（torchrun会自动设置）
-    if rank is None:
-        rank = int(os.environ.get('RANK', 0))
-    if world_size is None:
-        world_size = int(os.environ.get('WORLD_SIZE', 1))
-
-    local_rank = int(os.environ.get('LOCAL_RANK', 0))
-
-    # 单GPU环境，跳过初始化
-    if world_size == 1:
-        print("⚠️  单GPU环境，将运行概念演示代码")
-        return
-
-    # 初始化进程组
-    if not dist.is_available():
-        raise RuntimeError("torch.distributed不可用，请检查PyTorch安装")
-
-    # 设置当前设备
-    torch.cuda.set_device(local_rank)
-
-    # 初始化NCCL后端
-    dist.init_process_group(
-        backend='nccl',
-        init_method='env://',
-        rank=rank,
-        world_size=world_size
-    )
-
-    if rank == 0:
-        print(f"✅ 分布式环境初始化成功: {world_size} GPUs")
-
-    dist.barrier()
-
-
-def cleanup_distributed():
-    """清理分布式环境"""
-    if dist.is_initialized():
-        dist.destroy_process_group()
-
-
-# 自动检测并初始化
-if __name__ == "__main__" or 'ipykernel' in sys.modules:
-    # 检查是否在torchrun环境
-    if 'RANK' in os.environ:
-        init_distributed()
-    else:
-        gpu_count = torch.cuda.device_count()
-        print(f"检测到 {gpu_count} 个GPU")
-        if gpu_count >= 2:
-            print("提示: 使用以下命令启动多GPU实验:")
-            print(f"  torchrun --nproc_per_node={gpu_count} your_script.py")
-        else:
-            print("单GPU环境，将运行概念演示")
+print(f"\n实验配置:")
+print(f"  - GPU数量: {gpu_count}")
+print(f"  - CUDA可用: {torch.cuda.is_available()}")
+print(f"  - PyTorch版本: {torch.__version__}")
 ```
 
-**运行结果:**
-
-```
-✅ 分布式环境初始化成功: 4 GPUs
-```
+    检测到 4 个GPU
+    ✅ 多GPU环境，将使用 torchrun 启动分布式训练 (建议使用 4 个GPU)
+    📝 后续实验将通过 %%writefile 创建临时脚本，自动运行 torchrun，并清理临时文件
+    
+    实验配置:
+      - GPU数量: 4
+      - CUDA可用: True
+      - PyTorch版本: 2.5.1+cu124
+    
 
 ## 1. 模型显存占用分析
 
@@ -145,6 +96,9 @@ if __name__ == "__main__" or 'ipykernel' in sys.modules:
 - *K*：表示优化器状态的内存倍数
 - $N_d$：表示 DP 程度
 
+
+
+
 根据[ZeRO论文](https://arxiv.org/abs/1910.02054)的假设，模型大小为 $\Psi$=7.5B，DP为 $N_d$=64，K=12：
 
 **混合精度训练（FP16 + FP32 Adam）显存占用**：
@@ -174,6 +128,9 @@ $$
 这解释了为什么单张A100（80GB）无法训练7B模型，需要ZeRO等显存优化技术。
 
 ---
+
+
+
 
 ```python
 import torch
@@ -267,43 +224,40 @@ def analyze_memory_with_theory(seed=42):
 memory_stats = analyze_memory_with_theory()
 ```
 
-**运行结果:**
+    ============================================================
+    显存占用分析（FP32训练）
+    ============================================================
+    模型加载                : 0.188 GB (Δ +0.188 GB)
+    创建优化器               : 0.188 GB (Δ +0.000 GB)
+    数据加载                : 0.188 GB (Δ +0.000 GB)
+    前向传播                : 0.199 GB (Δ +0.011 GB)
+    反向传播                : 0.392 GB (Δ +0.193 GB)
+    优化器更新               : 0.767 GB (Δ +0.375 GB)
+    ============================================================
+    
+    理论值对比（FP32）：
+      参数量:        50.36M (201.42 MB)
+      理论参数显存:  201.42 MB
+      理论梯度显存:  201.42 MB
+      理论优化器显存: 402.85 MB (Adam: m+v)
+      理论总计:      805.70 MB = 0.787 GB
+      实测总计:      0.767 GB
+      差异:          激活值 + 其他开销
+    ============================================================
+    
+    
 
-```
-============================================================
-
-显存占用分析（FP32训练）显存占用分析（FP32训练）
-
-============================================================
-模型加载                : 0.188 GB (Δ +0.188 GB)
-创建优化器               : 0.188 GB (Δ +0.000 GB)
-数据加载                : 0.188 GB (Δ +0.000 GB)
-前向传播                : 0.199 GB (Δ +0.011 GB)
-反向传播                : 0.392 GB (Δ +0.193 GB)
-优化器更新               : 0.767 GB (Δ +0.375 GB)
-============================================================
-
-理论值对比（FP32）：
-  参数量:        50.36M (201.42 MB)
-  理论参数显存:  201.42 MB
-  理论梯度显存:  201.42 MB
-  理论优化器显存: 402.85 MB (Adam: m+v)
-  理论总计:      805.70 MB = 0.787 GB
-  实测总计:      0.767 GB
-  差异:          激活值 + 其他开销
-============================================================
-```
 ## 2. 传统数据并行（DDP）基准测试
 
 ### 2.1 数据并行原理
 
 ![](./images/Code01ZeRO05.png)
 
-**传统数据并行**（Distributed Data Parallel, DDP）：
+传统数据并行（Distributed Data Parallel, DDP）：
 
 假设有N张卡，每张卡都要保存一个模型，每次迭代(iteration/step)都将batch数据分隔成N个大小的micro-batch，每张卡根据拿到的micro-batch数据独立计算梯度，然后调用**AllReduce**计算梯度均值，每张卡在独立进行参数更新
 
-**特点**：
+特点：
 
 - 每个GPU保存**完整**的模型副本
 - 每个GPU处理不同的数据批次
@@ -329,44 +283,26 @@ $$
 
 这是ZeRO各级别对比的基准。
 
+
 ```python
+%%writefile temp_ddp_baseline.py
 import torch
 import torch.nn as nn
 import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
+import os
 
 def run_ddp_baseline():
     """传统DDP基准测试"""
 
-    if not dist.is_initialized():
-        print("⚠️  需要分布式环境，显示单GPU基准")
-        device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-
-        model = nn.Sequential(
-            nn.Linear(2048, 2048),
-            nn.ReLU(),
-            nn.Linear(2048, 2048),
-            nn.ReLU(),
-            nn.Linear(2048, 2048),
-        ).to(device)
-
-        optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
-
-        torch.cuda.reset_peak_memory_stats()
-
-        inputs = torch.randn(32, 2048, device=device)
-        outputs = model(inputs)
-        loss = outputs.mean()
-        loss.backward()
-        optimizer.step()
-
-        peak_mem = torch.cuda.max_memory_allocated() / 1e9
-        print(f"单GPU峰值显存: {peak_mem:.3f} GB")
-        return peak_mem
-
+    # 初始化分布式环境
+    dist.init_process_group(backend='nccl')
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    device = torch.device(f'cuda:{rank}')
+    local_rank = int(os.environ['LOCAL_RANK'])
+
+    torch.cuda.set_device(local_rank)
+    device = torch.device(f'cuda:{local_rank}')
 
     # 创建模型并包装为DDP
     model = nn.Sequential(
@@ -377,7 +313,7 @@ def run_ddp_baseline():
         nn.Linear(2048, 2048),
     ).to(device)
 
-    ddp_model = DDP(model, device_ids=[rank])
+    ddp_model = DDP(model, device_ids=[local_rank])
     optimizer = torch.optim.Adam(ddp_model.parameters(), lr=1e-3)
 
     param_count = sum(p.numel() for p in model.parameters())
@@ -408,22 +344,55 @@ def run_ddp_baseline():
         print("="*60 + "\n")
 
     dist.barrier()
+    dist.destroy_process_group()
+
     return peak_mem
 
-# 运行基准测试
-ddp_memory = run_ddp_baseline()
+if __name__ == "__main__":
+    run_ddp_baseline()
 ```
-## 运行结果
 
+    Writing temp_ddp_baseline.py
+    
+
+
+```python
+# 运行DDP基准测试
+import subprocess
+import os
+
+gpu_count = torch.cuda.device_count()
+script_name = "temp_ddp_baseline.py"
+
+print(f"🚀 启动分布式训练 (使用 {gpu_count} 个GPU)...\n")
+
+# 运行torchrun
+result = subprocess.run(
+    f"torchrun --nproc_per_node={gpu_count} {script_name}",
+    shell=True,
+    capture_output=False
+)
+
+# 清理临时文件
+if os.path.exists(script_name):
+    os.remove(script_name)
+    print(f"\n✅ 已清理临时文件: {script_name}")
 ```
-============================================================
-传统DDP基准测试 (World Size = 4)
-============================================================
-参数量: 12.59M
-每个GPU峰值显存: 0.320 GB
-所有GPU总显存:   1.279 GB
-============================================================
-```
+
+    🚀 启动分布式训练 (使用 4 个GPU)...
+    
+    ============================================================
+    传统DDP基准测试 (World Size = 4)
+    ============================================================
+    参数量: 12.59M
+    每个GPU峰值显存: 0.320 GB
+    所有GPU总显存:   1.279 GB
+    ============================================================
+    
+    
+    ✅ 已清理临时文件: temp_ddp_baseline.py
+    
+
 ## 3. ZeRO-1: 优化器状态分片
 ![](./images/Code01ZeRO01.png)
 ### 3.1 核心思想
@@ -456,11 +425,15 @@ $$
 
 ---
 
+
+
 ```python
+%%writefile temp_zero1.py
 import torch
 import torch.nn as nn
 import torch.distributed as dist
 from typing import List
+import os
 
 class ZeRO1Optimizer:
     """
@@ -480,9 +453,6 @@ class ZeRO1Optimizer:
         betas: tuple = (0.9, 0.999),
         eps: float = 1e-8
     ):
-        if not dist.is_initialized():
-            raise RuntimeError("需要先初始化torch.distributed")
-
         self.rank = dist.get_rank()
         self.world_size = dist.get_world_size()
 
@@ -497,7 +467,6 @@ class ZeRO1Optimizer:
         self.local_params = self.all_params[start_idx:end_idx]
 
         # 只为本地分片创建优化器（节省优化器状态显存）
-        # 注意：如果local_params为空，创建一个dummy优化器
         if len(self.local_params) > 0:
             self.optimizer = torch.optim.Adam(
                 self.local_params,
@@ -506,10 +475,9 @@ class ZeRO1Optimizer:
                 eps=eps
             )
         else:
-            # 为空参数列表创建dummy优化器
             dummy_param = torch.nn.Parameter(torch.zeros(1, requires_grad=True))
             self.optimizer = torch.optim.Adam([dummy_param], lr=lr)
-            self.local_params = []  # 保持为空列表
+            self.local_params = []
 
         # 记录参数归属
         self.param_to_rank = {}
@@ -546,16 +514,19 @@ class ZeRO1Optimizer:
                 dist.broadcast(param.data, src=owner_rank)
 
         dist.barrier()
+
+
 def run_zero1_experiment():
     """ZeRO-1实验"""
 
-    if not dist.is_initialized():
-        print("⚠️  需要分布式环境")
-        return None
-
+    # 初始化分布式环境
+    dist.init_process_group(backend='nccl')
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    device = torch.device(f'cuda:{rank}')
+    local_rank = int(os.environ['LOCAL_RANK'])
+
+    torch.cuda.set_device(local_rank)
+    device = torch.device(f'cuda:{local_rank}')
 
     model = nn.Sequential(
         nn.Linear(2048, 2048),
@@ -595,27 +566,57 @@ def run_zero1_experiment():
         print("="*60 + "\n")
 
     dist.barrier()
+    dist.destroy_process_group()
+
     return peak_mem
 
-# 运行实验
-zero1_memory = run_zero1_experiment()
+if __name__ == "__main__":
+    run_zero1_experiment()
 ```
 
-**运行结果:**
+    Writing temp_zero1.py
+    
 
+
+```python
+# 运行ZeRO-1实验
+import subprocess
+import os
+
+gpu_count = torch.cuda.device_count()
+script_name = "temp_zero1.py"
+
+print(f"🚀 启动ZeRO-1分布式训练 (使用 {gpu_count} 个GPU)...\n")
+
+# 运行torchrun
+result = subprocess.run(
+    f"torchrun --nproc_per_node={gpu_count} {script_name}",
+    shell=True,
+    capture_output=False
+)
+
+# 清理临时文件
+if os.path.exists(script_name):
+    os.remove(script_name)
+    print(f"\n✅ 已清理临时文件: {script_name}")
 ```
-============================================================
-ZeRO-1 实验 (World Size = 4)
-============================================================
-参数量: 12.59M
-每个GPU峰值显存: 0.169 GB
-理论节省: ~56.2%
-============================================================
-```
+
+    🚀 启动ZeRO-1分布式训练 (使用 4 个GPU)...
+    
+    ============================================================
+    ZeRO-1 实验 (World Size = 4)
+    ============================================================
+    参数量: 12.59M
+    每个GPU峰值显存: 0.169 GB
+    理论节省: ~56.2%
+    ============================================================
+    
+    
+    ✅ 已清理临时文件: temp_zero1.py
+    
+
 ## 4. ZeRO-2: 优化器状态 + 梯度分片
-
 ![](./images/Code01ZeRO02.png)
-
 ### 4.1 核心思想
 
 ZeRO-2在ZeRO-1的基础上，进一步将**梯度**也进行分片。在传统数据并行中，每个GPU在反向传播后都保存完整的梯度副本，这与参数大小相当。ZeRO-2通过**reduce-scatter**通信原语，实现梯度的聚合与分片的一步完成。
@@ -693,11 +694,14 @@ $$
 ---
 
 
+
 ```python
+%%writefile temp_zero2.py
 import torch
 import torch.nn as nn
 import torch.distributed as dist
-from typing import List, Optional
+from typing import List
+import os
 
 class ZeRO2Optimizer:
     """
@@ -714,9 +718,6 @@ class ZeRO2Optimizer:
         betas: tuple = (0.9, 0.999),
         eps: float = 1e-8
     ):
-        if not dist.is_initialized():
-            raise RuntimeError("需要先初始化torch.distributed")
-
         self.rank = dist.get_rank()
         self.world_size = dist.get_world_size()
 
@@ -739,7 +740,6 @@ class ZeRO2Optimizer:
                 eps=eps
             )
         else:
-            # 为空参数列表创建dummy优化器
             dummy_param = torch.nn.Parameter(torch.zeros(1, requires_grad=True))
             self.optimizer = torch.optim.Adam([dummy_param], lr=lr)
             self.local_params = []
@@ -789,17 +789,19 @@ class ZeRO2Optimizer:
                 dist.broadcast(param.data, src=owner_rank)
 
         dist.barrier()
+
+
 def run_zero2_experiment():
     """ZeRO-2实验：测量实际显存占用"""
 
-    if not dist.is_initialized():
-        print("⚠️  需要在分布式环境运行")
-        print("启动命令: torchrun --nproc_per_node=4 script.py")
-        return None
-
+    # 初始化分布式环境
+    dist.init_process_group(backend='nccl')
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    device = torch.device(f'cuda:{rank}')
+    local_rank = int(os.environ['LOCAL_RANK'])
+
+    torch.cuda.set_device(local_rank)
+    device = torch.device(f'cuda:{local_rank}')
 
     # 创建测试模型
     model = nn.Sequential(
@@ -855,34 +857,65 @@ def run_zero2_experiment():
         print(f"{'='*60}\n")
 
     dist.barrier()
+    dist.destroy_process_group()
+
     return peak_mem
 
-# 运行实验
-zero2_memory = run_zero2_experiment()
+if __name__ == "__main__":
+    run_zero2_experiment()
 ```
 
-**运行结果:**
+    Writing temp_zero2.py
+    
 
-```
-============================================================
-ZeRO-2 实验 (World Size = 4)
-============================================================
-参数量: 12.59M (50.36 MB)
 
-显存追踪 (Rank 0):
-  模型加载后:     0.067 GB
-  创建优化器后:   0.067 GB (Δ +0.000 GB)
-  前向传播后:     0.068 GB (Δ +0.001 GB)
-  反向传播后:     0.118 GB (Δ +0.050 GB)
-  优化器step后:   0.118 GB (Δ +0.000 GB)
-  峰值显存:       0.135 GB
-  理论节省: ~65.6%
-============================================================
+```python
+# 运行ZeRO-2实验
+import subprocess
+import os
+
+gpu_count = torch.cuda.device_count()
+script_name = "temp_zero2.py"
+
+print(f"🚀 启动ZeRO-2分布式训练 (使用 {gpu_count} 个GPU)...\n")
+
+# 运行torchrun
+result = subprocess.run(
+    f"torchrun --nproc_per_node={gpu_count} {script_name}",
+    shell=True,
+    capture_output=False
+)
+
+# 清理临时文件
+if os.path.exists(script_name):
+    os.remove(script_name)
+    print(f"\n✅ 已清理临时文件: {script_name}")
 ```
+
+    🚀 启动ZeRO-2分布式训练 (使用 4 个GPU)...
+    
+    
+    ============================================================
+    ZeRO-2 实验 (World Size = 4)
+    ============================================================
+    参数量: 12.59M (50.36 MB)
+    
+    显存追踪 (Rank 0):
+      模型加载后:     0.050 GB
+      创建优化器后:   0.050 GB (Δ +0.000 GB)
+      前向传播后:     0.060 GB (Δ +0.010 GB)
+      反向传播后:     0.118 GB (Δ +0.058 GB)
+      优化器step后:   0.118 GB (Δ +0.000 GB)
+      峰值显存:       0.135 GB
+      理论节省: ~65.6%
+    ============================================================
+    
+    
+    ✅ 已清理临时文件: temp_zero2.py
+    
+
 ## 5. ZeRO-3: 优化器状态 + 梯度 + 参数分片
-
 ![](./images/Code01ZeRO03.png)
-
 ### 5.1 核心思想
 
 ZeRO-3是最激进的优化方案，将**参数**、**梯度**和**优化器状态**全部分片：
@@ -920,13 +953,16 @@ $$
 
 ---
 
+
+
 ```python
-# Cell 1: ZeRO3Model和ZeRO3Optimizer实现
+%%writefile temp_zero3.py
 import torch
 import torch.nn as nn
 import torch.distributed as dist
 from typing import List
 from contextlib import contextmanager
+import os
 
 class ZeRO3Model(nn.Module):
     """
@@ -940,9 +976,6 @@ class ZeRO3Model(nn.Module):
 
     def __init__(self, module: nn.Module):
         super().__init__()
-
-        if not dist.is_initialized():
-            raise RuntimeError("需要先初始化torch.distributed")
 
         self.module = module
         self.rank = dist.get_rank()
@@ -1012,9 +1045,6 @@ class ZeRO3Optimizer:
     """ZeRO-3优化器: 配合ZeRO3Model使用"""
 
     def __init__(self, model: ZeRO3Model, lr: float = 1e-3):
-        if not dist.is_initialized():
-            raise RuntimeError("需要先初始化torch.distributed")
-
         self.model = model
         self.rank = dist.get_rank()
         self.world_size = dist.get_world_size()
@@ -1063,17 +1093,19 @@ class ZeRO3Optimizer:
         self.optimizer.step()
 
         dist.barrier()
-# Cell 2: ZeRO-3实验代码
+
+
 def run_zero3_experiment():
     """ZeRO-3实验"""
 
-    if not dist.is_initialized():
-        print("⚠️  需要分布式环境")
-        return None
-
+    # 初始化分布式环境
+    dist.init_process_group(backend='nccl')
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-    device = torch.device(f'cuda:{rank}')
+    local_rank = int(os.environ['LOCAL_RANK'])
+
+    torch.cuda.set_device(local_rank)
+    device = torch.device(f'cuda:{local_rank}')
 
     # 创建基础模型
     base_model = nn.Sequential(
@@ -1120,23 +1152,55 @@ def run_zero3_experiment():
         print("="*60 + "\n")
 
     dist.barrier()
+    dist.destroy_process_group()
+
     return peak_mem
 
-# 运行实验
-zero3_memory = run_zero3_experiment()
+if __name__ == "__main__":
+    run_zero3_experiment()
 ```
 
-**运行结果:**
+    Writing temp_zero3.py
+    
 
+
+```python
+# 运行ZeRO-3实验
+import subprocess
+import os
+
+gpu_count = torch.cuda.device_count()
+script_name = "temp_zero3.py"
+
+print(f"🚀 启动ZeRO-3分布式训练 (使用 {gpu_count} 个GPU)...\n")
+
+# 运行torchrun
+result = subprocess.run(
+    f"torchrun --nproc_per_node={gpu_count} {script_name}",
+    shell=True,
+    capture_output=False
+)
+
+# 清理临时文件
+if os.path.exists(script_name):
+    os.remove(script_name)
+    print(f"\n✅ 已清理临时文件: {script_name}")
 ```
-============================================================
-ZeRO-3 实验 (World Size = 4)
-============================================================
-参数量: 12.59M
-每个GPU峰值显存: 0.136 GB
-理论节省: ~75.0%
-============================================================
-```
+
+    🚀 启动ZeRO-3分布式训练 (使用 4 个GPU)...
+    
+    ============================================================
+    ZeRO-3 实验 (World Size = 4)
+    ============================================================
+    参数量: 12.59M
+    每个GPU峰值显存: 0.136 GB
+    理论节省: ~75.0%
+    ============================================================
+    
+    
+    ✅ 已清理临时文件: temp_zero3.py
+    
+
 ## 6. 综合对比实验
 
 本节运行所有方法并生成对比报告。
@@ -1157,50 +1221,280 @@ ZeRO-3 实验 (World Size = 4)
 - **ZeRO-2**: 5.5Ψ → 节省 65.6%
 - **ZeRO-3**: 4Ψ → 节省 75%
 
+
 ```python
-def run_all_experiments():
-    """运行所有方法的对比实验"""
+%%writefile temp_all_experiments.py
+import torch
+import torch.nn as nn
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel as DDP
+from typing import List
+from contextlib import contextmanager
+import os
 
-    if not dist.is_initialized():
-        print("⚠️  需要分布式环境运行完整对比")
-        print("提示: torchrun --nproc_per_node=4 script.py\n")
-        return
+# ============== ZeRO-1 Optimizer ==============
+class ZeRO1Optimizer:
+    def __init__(self, params: List[nn.Parameter], lr: float = 1e-3, betas: tuple = (0.9, 0.999), eps: float = 1e-8):
+        self.rank = dist.get_rank()
+        self.world_size = dist.get_world_size()
+        self.all_params = list(params)
+        self.num_params = len(self.all_params)
 
+        params_per_rank = (self.num_params + self.world_size - 1) // self.world_size
+        start_idx = self.rank * params_per_rank
+        end_idx = min(start_idx + params_per_rank, self.num_params)
+        self.local_params = self.all_params[start_idx:end_idx]
+
+        if len(self.local_params) > 0:
+            self.optimizer = torch.optim.Adam(self.local_params, lr=lr, betas=betas, eps=eps)
+        else:
+            dummy_param = torch.nn.Parameter(torch.zeros(1, requires_grad=True))
+            self.optimizer = torch.optim.Adam([dummy_param], lr=lr)
+            self.local_params = []
+
+        self.param_to_rank = {}
+        for idx, param in enumerate(self.all_params):
+            owner_rank = idx // params_per_rank
+            self.param_to_rank[param] = min(owner_rank, self.world_size - 1)
+
+    def zero_grad(self):
+        for param in self.all_params:
+            if param.grad is not None:
+                param.grad.zero_()
+
+    def step(self):
+        for param in self.all_params:
+            if param.grad is not None and self.world_size > 1:
+                dist.all_reduce(param.grad.data, op=dist.ReduceOp.SUM)
+                param.grad.data /= self.world_size
+
+        self.optimizer.step()
+
+        if self.world_size > 1:
+            for param in self.all_params:
+                owner_rank = self.param_to_rank[param]
+                dist.broadcast(param.data, src=owner_rank)
+
+        dist.barrier()
+
+# ============== ZeRO-2 Optimizer ==============
+class ZeRO2Optimizer:
+    def __init__(self, params: List[nn.Parameter], lr: float = 1e-3, betas: tuple = (0.9, 0.999), eps: float = 1e-8):
+        self.rank = dist.get_rank()
+        self.world_size = dist.get_world_size()
+        self.all_params = list(params)
+        self.num_params = len(self.all_params)
+
+        params_per_rank = (self.num_params + self.world_size - 1) // self.world_size
+        start_idx = self.rank * params_per_rank
+        end_idx = min(start_idx + params_per_rank, self.num_params)
+        self.local_params = self.all_params[start_idx:end_idx]
+
+        if len(self.local_params) > 0:
+            self.optimizer = torch.optim.Adam(self.local_params, lr=lr, betas=betas, eps=eps)
+        else:
+            dummy_param = torch.nn.Parameter(torch.zeros(1, requires_grad=True))
+            self.optimizer = torch.optim.Adam([dummy_param], lr=lr)
+            self.local_params = []
+
+        self.param_to_rank = {}
+        for idx, param in enumerate(self.all_params):
+            owner_rank = idx // params_per_rank
+            self.param_to_rank[param] = min(owner_rank, self.world_size - 1)
+
+    def zero_grad(self):
+        for param in self.all_params:
+            if param.grad is not None:
+                param.grad.zero_()
+
+    def step(self):
+        for param in self.all_params:
+            if param.grad is not None:
+                owner_rank = self.param_to_rank[param]
+                if self.world_size > 1:
+                    dist.reduce(param.grad.data, dst=owner_rank, op=dist.ReduceOp.SUM)
+                    if self.rank != owner_rank:
+                        param.grad = None
+
+        self.optimizer.step()
+
+        if self.world_size > 1:
+            for param in self.all_params:
+                owner_rank = self.param_to_rank[param]
+                dist.broadcast(param.data, src=owner_rank)
+
+        dist.barrier()
+
+# ============== ZeRO-3 Model and Optimizer ==============
+class ZeRO3Model(nn.Module):
+    def __init__(self, module: nn.Module):
+        super().__init__()
+        self.module = module
+        self.rank = dist.get_rank()
+        self.world_size = dist.get_world_size()
+        self.params = list(module.parameters())
+        self.num_params = len(self.params)
+        self._shard_parameters()
+
+    def _shard_parameters(self):
+        params_per_rank = (self.num_params + self.world_size - 1) // self.world_size
+        for idx, param in enumerate(self.params):
+            owner_rank = min(idx // params_per_rank, self.world_size - 1)
+            param._zero3_full_shape = param.data.shape
+            param._zero3_owner_rank = owner_rank
+            if self.rank == owner_rank:
+                param._zero3_full_param = param.data.clone()
+            else:
+                param.data = torch.empty(0, dtype=param.dtype, device=param.device)
+                param._zero3_full_param = None
+
+    @contextmanager
+    def _gather_parameters(self):
+        try:
+            for param in self.params:
+                owner_rank = param._zero3_owner_rank
+                if param.data.numel() == 0:
+                    param.data = torch.empty(param._zero3_full_shape, dtype=param.dtype, device=param.device)
+                if self.world_size > 1:
+                    dist.broadcast(param.data, src=owner_rank)
+            yield
+        finally:
+            for param in self.params:
+                if self.rank != param._zero3_owner_rank:
+                    param.data = torch.empty(0, dtype=param.dtype, device=param.device)
+
+    def forward(self, *args, **kwargs):
+        with self._gather_parameters():
+            return self.module(*args, **kwargs)
+
+class ZeRO3Optimizer:
+    def __init__(self, model: ZeRO3Model, lr: float = 1e-3):
+        self.model = model
+        self.rank = dist.get_rank()
+        self.world_size = dist.get_world_size()
+        local_params = [p for p in model.params if p._zero3_owner_rank == self.rank]
+        if len(local_params) > 0:
+            self.optimizer = torch.optim.Adam(local_params, lr=lr)
+        else:
+            dummy_param = torch.nn.Parameter(torch.zeros(1, requires_grad=True))
+            self.optimizer = torch.optim.Adam([dummy_param], lr=lr)
+
+    def zero_grad(self):
+        self.model.zero_grad()
+
+    def step(self):
+        for param in self.model.params:
+            if param.grad is not None:
+                owner_rank = param._zero3_owner_rank
+                if self.world_size > 1:
+                    dist.reduce(param.grad.data, dst=owner_rank, op=dist.ReduceOp.SUM)
+                    if self.rank != owner_rank:
+                        param.grad = None
+        self.optimizer.step()
+        dist.barrier()
+
+# ============== Experiment Functions ==============
+def run_ddp_baseline(rank, world_size, local_rank, device):
+    model = nn.Sequential(nn.Linear(2048, 2048), nn.ReLU(), nn.Linear(2048, 2048), nn.ReLU(), nn.Linear(2048, 2048)).to(device)
+    ddp_model = DDP(model, device_ids=[local_rank])
+    optimizer = torch.optim.Adam(ddp_model.parameters(), lr=1e-3)
+    torch.cuda.reset_peak_memory_stats(device)
+
+    ddp_model.train()
+    optimizer.zero_grad()
+    inputs = torch.randn(32, 2048, device=device)
+    outputs = ddp_model(inputs)
+    loss = outputs.mean()
+    loss.backward()
+    optimizer.step()
+
+    return torch.cuda.max_memory_allocated(device) / 1e9
+
+def run_zero1_experiment(rank, world_size, local_rank, device):
+    model = nn.Sequential(nn.Linear(2048, 2048), nn.ReLU(), nn.Linear(2048, 2048), nn.ReLU(), nn.Linear(2048, 2048)).to(device)
+    optimizer = ZeRO1Optimizer(model.parameters(), lr=1e-3)
+    torch.cuda.reset_peak_memory_stats(device)
+
+    model.train()
+    optimizer.zero_grad()
+    inputs = torch.randn(32, 2048, device=device)
+    outputs = model(inputs)
+    loss = outputs.mean()
+    loss.backward()
+    optimizer.step()
+
+    return torch.cuda.max_memory_allocated(device) / 1e9
+
+def run_zero2_experiment(rank, world_size, local_rank, device):
+    model = nn.Sequential(nn.Linear(2048, 2048), nn.ReLU(), nn.Linear(2048, 2048), nn.ReLU(), nn.Linear(2048, 2048)).to(device)
+    optimizer = ZeRO2Optimizer(model.parameters(), lr=1e-3)
+    torch.cuda.reset_peak_memory_stats(device)
+
+    model.train()
+    optimizer.zero_grad()
+    inputs = torch.randn(32, 2048, device=device)
+    outputs = model(inputs)
+    loss = outputs.mean()
+    loss.backward()
+    optimizer.step()
+
+    return torch.cuda.max_memory_allocated(device) / 1e9
+
+def run_zero3_experiment(rank, world_size, local_rank, device):
+    base_model = nn.Sequential(nn.Linear(2048, 2048), nn.ReLU(), nn.Linear(2048, 2048), nn.ReLU(), nn.Linear(2048, 2048)).to(device)
+    model = ZeRO3Model(base_model)
+    optimizer = ZeRO3Optimizer(model, lr=1e-3)
+    torch.cuda.reset_peak_memory_stats(device)
+
+    model.train()
+    optimizer.zero_grad()
+    inputs = torch.randn(32, 2048, device=device)
+    outputs = model(inputs)
+    loss = outputs.mean()
+    with model._gather_parameters():
+        loss.backward()
+    optimizer.step()
+
+    return torch.cuda.max_memory_allocated(device) / 1e9
+
+# ============== Main ==============
+def main():
+    dist.init_process_group(backend='nccl')
     rank = dist.get_rank()
     world_size = dist.get_world_size()
-
-    results = {}
+    local_rank = int(os.environ['LOCAL_RANK'])
+    torch.cuda.set_device(local_rank)
+    device = torch.device(f'cuda:{local_rank}')
 
     if rank == 0:
         print("\n" + "="*60)
         print(f"综合对比实验 (World Size = {world_size})")
         print("="*60 + "\n")
 
-    # 运行各方法
+    results = {}
+
     if rank == 0:
         print(">>> 运行 DDP 基准...")
-    results['DDP'] = run_ddp_baseline()
+    results['DDP'] = run_ddp_baseline(rank, world_size, local_rank, device)
     dist.barrier()
 
     if rank == 0:
-        print("\n>>> 运行 ZeRO-1...")
-    results['ZeRO-1'] = run_zero1_experiment()
+        print(">>> 运行 ZeRO-1...")
+    results['ZeRO-1'] = run_zero1_experiment(rank, world_size, local_rank, device)
     dist.barrier()
 
     if rank == 0:
-        print("\n>>> 运行 ZeRO-2...")
-    results['ZeRO-2'] = run_zero2_experiment()
+        print(">>> 运行 ZeRO-2...")
+    results['ZeRO-2'] = run_zero2_experiment(rank, world_size, local_rank, device)
     dist.barrier()
 
     if rank == 0:
-        print("\n>>> 运行 ZeRO-3...")
-    results['ZeRO-3'] = run_zero3_experiment()
+        print(">>> 运行 ZeRO-3...")
+    results['ZeRO-3'] = run_zero3_experiment(rank, world_size, local_rank, device)
     dist.barrier()
 
-    # 生成对比报告
     if rank == 0:
         baseline = results['DDP']
-
         print("\n" + "="*60)
         print("最终对比结果")
         print("="*60)
@@ -1211,92 +1505,82 @@ def run_all_experiments():
             mem = results[method]
             reduction = (1 - mem / baseline) * 100
 
-            # 理论节省值
             if method == 'DDP':
                 theory = 0
             elif method == 'ZeRO-1':
                 theory = (1 - 1/world_size) * 75
             elif method == 'ZeRO-2':
                 theory = (1 - 1/world_size) * 87.5
-            else:  # ZeRO-3
+            else:
                 theory = (1 - 1/world_size) * 100
 
             print(f"{method:<10} {mem:>6.3f} GB       {reduction:>5.1f}%          {theory:>5.1f}%")
 
         print("="*60 + "\n")
 
-    return results
+    dist.destroy_process_group()
 
-# 运行综合对比
-if dist.is_available() and dist.is_initialized():
-    all_results = run_all_experiments()
+if __name__ == "__main__":
+    main()
 ```
 
-**运行结果:**
+    Writing temp_all_experiments.py
+    
+
+
+```python
+# 运行综合对比实验
+import subprocess
+import os
+
+gpu_count = torch.cuda.device_count()
+script_name = "temp_all_experiments.py"
+
+print(f"🚀 启动综合对比实验 (使用 {gpu_count} 个GPU)...\n")
+print("将依次运行: DDP, ZeRO-1, ZeRO-2, ZeRO-3\n")
+
+# 运行torchrun
+result = subprocess.run(
+    f"torchrun --nproc_per_node={gpu_count} {script_name}",
+    shell=True,
+    capture_output=False
+)
+
+# 清理临时文件
+if os.path.exists(script_name):
+    os.remove(script_name)
+    print(f"\n✅ 已清理临时文件: {script_name}")
 ```
-============================================================
-综合对比实验 (World Size = 4)
-============================================================
 
->>> 运行 DDP 基准...
-============================================================
-传统DDP基准测试 (World Size = 4)
-============================================================
-参数量: 12.59M
-每个GPU峰值显存: 0.320 GB
-所有GPU总显存:   1.279 GB
-============================================================
+    🚀 启动综合对比实验 (使用 4 个GPU)...
+    
+    将依次运行: DDP, ZeRO-1, ZeRO-2, ZeRO-3
+    
+    
+    ============================================================
+    综合对比实验 (World Size = 4)
+    ============================================================
+    
+    >>> 运行 DDP 基准...
+    >>> 运行 ZeRO-1...
+    >>> 运行 ZeRO-2...
+    >>> 运行 ZeRO-3...
+    
+    ============================================================
+    最终对比结果
+    ============================================================
+    方法         峰值显存(GB)        相对DDP           理论节省
+    ------------------------------------------------------------
+    DDP         0.320 GB         0.0%            0.0%
+    ZeRO-1      0.169 GB        47.3%           56.2%
+    ZeRO-2      0.135 GB        57.8%           65.6%
+    ZeRO-3      0.136 GB        57.4%           75.0%
+    ============================================================
+    
+    
+    ✅ 已清理临时文件: temp_all_experiments.py
+    
 
-
->>> 运行 ZeRO-1...
-============================================================
-ZeRO-1 实验 (World Size = 4)
-============================================================
-参数量: 12.59M
-每个GPU峰值显存: 0.169 GB
-理论节省: ~56.2%
-============================================================
-
-
->>> 运行 ZeRO-2...
-
-============================================================
-ZeRO-2 实验 (World Size = 4)
-============================================================
-参数量: 12.59M (50.36 MB)
-
-显存追踪 (Rank 0):
-  模型加载后:     0.067 GB
-  创建优化器后:   0.067 GB (Δ +0.000 GB)
-  前向传播后:     0.068 GB (Δ +0.001 GB)
-  反向传播后:     0.118 GB (Δ +0.050 GB)
-  优化器step后:   0.118 GB (Δ +0.000 GB)
-  峰值显存:       0.135 GB
-  理论节省: ~65.6%
-============================================================
-
-
->>> 运行 ZeRO-3...
-============================================================
-ZeRO-3 实验 (World Size = 4)
-============================================================
-参数量: 12.59M
-每个GPU峰值显存: 0.136 GB
-理论节省: ~75.0%
-============================================================
-
-
-============================================================
-最终对比结果
-============================================================
-方法         峰值显存(GB)        相对DDP           理论节省
-------------------------------------------------------------
-DDP         0.320 GB         0.0%            0.0%
-ZeRO-1      0.169 GB        47.3%           56.2%
-ZeRO-2      0.135 GB        57.8%           65.6%
-ZeRO-3      0.136 GB        57.4%           75.0%
-============================================================
-```
 ## 总结与思考
 
 本实验通过真实多GPU环境的代码实现，深入探讨了ZeRO的各级优化技术：
@@ -1338,4 +1622,5 @@ ZeRO-3      0.136 GB        57.4%           75.0%
 [DeepSpeed之ZeRO系列：将显存优化进行到底](https://zhuanlan.zhihu.com/p/513571706)
 
 [ZeRO：一种去除冗余的数据并行方案](https://www.cnblogs.com/whiteBear/p/18341975)
+
 
