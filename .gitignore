@@ -21,3 +21,8 @@ prompt.txt
 prompt.md
 prompt.md
 04Train/05FineTune/sync.sh
+main.py
+.python-version
+pyproject.toml
+uv.lock
+

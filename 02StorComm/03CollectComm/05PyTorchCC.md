@@ -153,19 +153,84 @@ PyTorch 的分布式能力位于 `torch.distributed`
 
 ## PyTorch 的“计算–通信”并行
 
-PyTorch 计算与通信并行的分析主要依赖一些 profile 工具。下面展示了一个 profile 的截图，其中可以看到每个时间点有哪些操作正在进行。
+### 计算与通信解耦与性能优化策略
+
+在前置课程[02.集合通信关键作用](02CCOverview.md)中曾经提到 xCCL 通过采样**计算与通信解耦**的策略，将计算和通信两个过程独立执行，分别优化。通过性能优化策略减少通信频率，提升集群训练性能（HFU/MFU）并防止通信等待时间过长导致的“假死锁”问题。
+
+性能优化策略包含**异步 Stream 并行调度**、**通信粒度优化**和**死锁防护**。
+
+**异步 Stream 并行调度**是利用 GPU 的流（Stream），其允许将不同的流并行执行，从而实现主机（CPU）与设备（GPU）之间数据传输和计算的重叠。如计算 Stream 无需等待上一层通信完成，可连续推进下一层 FFN 与 MLA 模块计算；通信 Stream 则异步抓取已就绪的梯度与特征数据，通过 Ring AllReduce 协议后台传输，使总耗时从 “计算 + 通信” 逼近二者之中最大的耗时而非二者耗时之和。
+
+![02CCOverview09](./images/02CCOverview09.png)
+
+**通信粒度优化**是指解耦后可灵活合并通信任务，例如累积多层梯度后执行一次 AllReduce，将通信次数从 “每层 1 次” 降至 “每 N 层 1 次”，减少通信启动开销与带宽占用，进一步降低通信对流程的影响。
+
+在传统串行通信中，单个节点通信阻塞会导致全集群等待（“假死锁”）；当计算与通信解耦后，计算与通信独立，局部通信异常时，其他节点计算仍可推进，通信模块可重试容错，避免全集群挂起，从而实现**死锁防护**。
+
+PyTorch 中计算与通信并行的分析主要依赖一些 profile 工具。下面展示了一个 profile 的截图，其中可以看到每个时间点有哪些操作正在进行。
 
 ![05PyTorchCC11](./images/05PyTorchCC11.png)
 
-### Stream / Event 基础
+### 流（Stream）和事件（Event）
 
-- **Stream**：设备侧的异步命令队列；PyTorch 的**内存池与 Stream 绑定**，能把数据搬运与算子执行并行化，提高吞吐。
-- **Event**：轻量级的时序/同步原语，可在 Stream 中记录标记点用于等待或测时。
-PyTorch 通信与计算并行，主要通过 Stream（并行能力）与 Event（时序控制）这两个提供的底层能力来实现。
+**流（Stream）**是一系列在 GPU 上按顺序执行的异步 CUDA 操作，它允许将不同的流并行执行，从而实现数据传输和计算的重叠。同一个流中的操作有顺序限制，而不同流之间的操作则可以并行执行，这有助于提高 GPU 的利用率和整体性能。流的概念也为开发者提供了一种对 GPU 任务执行顺序的精细控制机制。 
+
+在 PyTorch 中，`torch.cuda.Stream()` 就是 CUDA 流的封装，其可以用来创建新的流，并使用 `torch.cuda.current_stream()` 来获取当前流。`Stream()`的主要方法有`record_event(event=None)`、`synchronize()`、`wait_event(event)`、`wait_stream(stream)`等，分别用于记录事件、同步、等待事件和与另一个流同步。
+
+**事件（Event）** 是轻量级的时序和同步原语，可在流中记录标记点用于等待或测时。PyTorch 同样提供了 CUDA 事件的封装 `torch.cuda.Event()`，以及`record()`、`synchronize()`、`wait()`等方法。
+
+PyTorch 通信与计算并行，主要通过 Stream（并行能力）与 Event（时序控制）这两个提供的底层能力来实现。如生产流中 `record()`，并在消费流中 `wait()`/`wait_event()`，进而实现跨流的同步。
+
+由于 PyTorch 的内存池（memory pool）是与 Stream 绑定的，，我们就能把数据搬运放在专门的 copy stream，把算子执行放在 compute stream，两边互不阻塞，达到数据搬运与算子执行重叠、提升吞吐。
 
 如下图所示，串行执行时是 OP1→XCCL1→OP2；并行化后，OP3 结束即可**同时**下发 XCCL2，计算流继续执行 OP4。
 
 ![05PyTorchCC12](./images/05PyTorchCC12.png)
+
+下列代码块展示了上图的 PyTorch 伪代码：
+
+```python
+import torch
+import torch.distributed as dist
+
+# ======================
+# 串行：OP1 -> XCCL1 -> OP2
+# ======================
+
+x1 = ...                      # 本批输入
+out1 = OP1(x1)                # 计算 OP1（默认流）
+
+dist.all_reduce(out1)         # XCCL1：通信（阻塞/默认流上执行）
+
+out2 = OP2(out1)              # 计算 OP2（通信完成后再继续）
+
+# ===========================================
+# 并行：OP3 结束即可同时下发 XCCL2，计算流继续 OP4
+# ===========================================
+
+compute = torch.cuda.default_stream()     # 计算流
+comm    = torch.cuda.Stream()             # 通信流（XCCL 专用）
+ev_done = torch.cuda.Event()              # 用于串联：OP3 -> XCCL2
+
+x3, x4 = ..., ...                         # x3=当前批；x4=下一批（或不依赖 XCCL2 的计算）
+
+# --- OP3：先在计算流完成本批计算 ---
+with torch.cuda.stream(compute):
+    out3 = OP3(x3)                        # 计算 OP3
+    compute.record_event(ev_done)         # 记录 OP3 完成时刻
+
+# --- XCCL2：在通信流等待 OP3 完成后立即下发 ---
+with torch.cuda.stream(comm):
+    comm.wait_event(ev_done)              # 精确依赖：仅等待 OP3
+    handle = dist.all_reduce(out3, async_op=True)  # XCCL2 异步启动（通信流）
+
+# --- 计算流同时继续后续计算 OP4（与 XCCL2 并行）---
+with torch.cuda.stream(compute):
+    out4 = OP4(x4)                        # 计算 OP4（与上面的 all_reduce 并行执行）
+
+# （需要使用 XCCL2 结果时再等待）
+handle.wait()                             # 或 comm.synchronize()
+```
 
 ### 计算流之间的同步
 
@@ -216,3 +281,4 @@ Host 下发与 Device 执行是**异步**的：先 Record event，再在目标 S
 - [NCCL 官方文档](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/index.html)
 - https://en.wikipedia.org/wiki/NVLink#Service_software_and_programming
 - https://en.wikipedia.org/wiki/Collective_operation
+- [pytorch中的stream和event](https://yaopepe.com/2025/09/07/distribute/stream_event/)
