@@ -2,7 +2,7 @@
 
 # 01.万卡 AI 集群建设挑战
 
-Author by: wangxinxin
+Author by: staries wang
 
 ## 一、超万卡集群背景与趋势
 
